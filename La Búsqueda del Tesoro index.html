@@ -1,0 +1,3403 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🏴‍☠️ La Búsqueda del Tesoro Matemático</title>
+  <style>
+    /* =====================================================================
+       VARIABLES Y ESTILOS GENERALES - ESCAPE ROOM ARQUÍMEDES (5.º GRADO)
+       ===================================================================== */
+    :root {
+      --cielo: #38bdf8;
+      --mar: #0284c7;
+      --mar-oscuro: #082f49;
+      --dorado: #ffd700;
+      --dorado-borde: #ca8a04;
+      --pergamino: #fdf6e7;
+      --pergamino-sombra: #f3e2c1;
+      --madera: #451a03;
+      --madera-clara: #78350f;
+      --verde: #15803d;
+      --rojo: #b91c1c;
+      --texto: #1c1917;
+      --sombra-panel: 0 14px 30px rgba(0, 0, 0, 0.38);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+      color: var(--texto);
+      background: linear-gradient(180deg, var(--cielo) 0%, var(--mar) 52%, var(--mar-oscuro) 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* =====================================================================
+       FONDO ANIMADO DEL OCÉANO Y BARCO PIRATA CON EMOJIS Y CSS PURO
+       ===================================================================== */
+    .oceano-escena {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .sol-brillante {
+      position: absolute;
+      top: 28px;
+      right: 7%;
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fef9c3 20%, #facc15 68%, rgba(250, 204, 21, 0) 100%);
+      box-shadow: 0 0 42px rgba(250, 204, 21, 0.8);
+      animation: pulsarSol 4s ease-in-out infinite alternate;
+    }
+
+    .nube-css {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.82);
+      border-radius: 999px;
+      height: 32px;
+    }
+    .nube-1 {
+      width: 120px;
+      top: 62px;
+      left: -150px;
+      animation: cruzarNube 34s linear infinite;
+    }
+    .nube-2 {
+      width: 155px;
+      top: 112px;
+      left: -200px;
+      animation: cruzarNube 48s linear infinite 11s;
+    }
+
+    .barco-pirata-flotante {
+      position: absolute;
+      bottom: 84px;
+      left: -180px;
+      font-size: 4.2rem;
+      line-height: 1;
+      filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.4));
+      animation: navegarBarco 26s linear infinite, mecerBarco 3s ease-in-out infinite;
+    }
+
+    .ola-css {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 200%;
+      border-radius: 45% 45% 0 0;
+    }
+    .ola-1 {
+      height: 112px;
+      background: rgba(3, 105, 161, 0.84);
+      animation: moverOla 9s linear infinite;
+    }
+    .ola-2 {
+      height: 84px;
+      background: rgba(12, 74, 110, 0.92);
+      animation: moverOla 6.5s linear infinite reverse;
+    }
+    .ola-3 {
+      height: 58px;
+      background: rgba(8, 47, 73, 0.98);
+      animation: moverOla 12s linear infinite;
+    }
+
+    .moneda-decorativa {
+      position: fixed;
+      font-size: 1.85rem;
+      z-index: 1;
+      pointer-events: none;
+      user-select: none;
+      animation: flotarItem 4.8s ease-in-out infinite;
+    }
+    .md-1 { top: 14%; left: 5%; animation-delay: 0s; }
+    .md-2 { top: 22%; right: 6%; animation-delay: 1.2s; }
+    .md-3 { bottom: 24%; left: 6%; animation-delay: 2.3s; }
+    .md-4 { bottom: 26%; right: 6%; animation-delay: 3.1s; }
+
+    /* =====================================================================
+       VISTAS SPA
+       ===================================================================== */
+    .vista {
+      display: none;
+      position: relative;
+      z-index: 5;
+      min-height: 100vh;
+    }
+    .vista.activa {
+      display: block;
+    }
+    #vista-inicio.activa {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    /* =====================================================================
+       VISTA 1: INICIO
+       ===================================================================== */
+    .pergamino-inicio {
+      position: relative;
+      width: 100%;
+      max-width: 750px;
+      background: radial-gradient(circle at top, #fffef9 0%, var(--pergamino) 55%, var(--pergamino-sombra) 100%);
+      border: 5px solid var(--madera-clara);
+      border-radius: 24px;
+      box-shadow: 0 0 0 4px var(--dorado-borde), var(--sombra-panel);
+      padding: 32px 26px;
+      text-align: center;
+    }
+
+    .brujula-badge {
+      position: absolute;
+      top: -26px;
+      right: -14px;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fef08a 25%, #eab308 100%);
+      border: 4px solid var(--madera);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+      animation: girarBrujula 5s ease-in-out infinite;
+    }
+
+    .etiqueta-nivel {
+      display: inline-block;
+      background: var(--madera);
+      color: var(--dorado);
+      font-weight: 800;
+      font-size: 0.82rem;
+      letter-spacing: 0.8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 2px solid var(--dorado-borde);
+      margin-bottom: 12px;
+    }
+
+    .titulo-juego {
+      font-size: clamp(1.75rem, 4vw, 2.45rem);
+      color: var(--madera);
+      text-shadow: 2px 2px 0 var(--dorado);
+      margin-bottom: 12px;
+      animation: latidoTitulo 2.8s ease-in-out infinite;
+    }
+
+    .intro-historia {
+      font-size: 1.02rem;
+      line-height: 1.55;
+      color: #44403c;
+      max-width: 630px;
+      margin: 0 auto 18px;
+    }
+
+    .resumen-islas-inicio {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      background: rgba(120, 53, 15, 0.09);
+      border: 2px dashed var(--madera-clara);
+      border-radius: 16px;
+      padding: 13px 16px;
+      margin-bottom: 18px;
+    }
+
+    .lista-ruta-inicio {
+      flex: 1;
+      min-width: 240px;
+      text-align: left;
+      font-size: 0.9rem;
+      font-weight: 700;
+      line-height: 1.7;
+      color: var(--madera);
+    }
+
+    .cofre-emoji-inicio {
+      font-size: 3.4rem;
+      animation: brillarCofre 2.2s ease-in-out infinite alternate;
+    }
+
+    .caja-input-nombre {
+      background: #ffffff;
+      border: 2px solid #d6b88d;
+      border-radius: 16px;
+      padding: 14px 16px;
+      text-align: left;
+      margin-bottom: 18px;
+    }
+
+    .caja-input-nombre label {
+      display: block;
+      font-weight: 800;
+      color: var(--madera);
+      margin-bottom: 8px;
+      font-size: 0.98rem;
+    }
+
+    .caja-input-nombre input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1.04rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .caja-input-nombre input:focus {
+      border-color: var(--mar);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+    }
+
+    .texto-error {
+      min-height: 20px;
+      margin-top: 6px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--rojo);
+    }
+
+    .botones-inicio {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Botones generales */
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 13px 22px;
+      font-size: 1.02rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.16s ease, filter 0.16s ease;
+    }
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+    }
+    .btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-dorado {
+      background: linear-gradient(180deg, #fde047 0%, #eab308 100%);
+      color: #291504;
+      border: 3px solid var(--madera);
+      box-shadow: 0 4px 0 var(--madera);
+    }
+
+    .btn-azul {
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+      color: #ffffff;
+      border: 3px solid #082f49;
+      box-shadow: 0 4px 0 #082f49;
+    }
+
+    .btn-verde {
+      background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+      color: #ffffff;
+      border: 3px solid #052e16;
+      box-shadow: 0 4px 0 #052e16;
+    }
+
+    .btn-excel {
+      background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
+      color: #ffffff;
+      border: 2px solid #052e16;
+      padding: 10px 15px;
+      font-size: 0.92rem;
+    }
+
+    .btn-peligro {
+      background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+      color: #ffffff;
+      border: 2px solid #7f1d1d;
+      padding: 10px 14px;
+      font-size: 0.92rem;
+    }
+
+    /* Botón discreto Acceso Docente en esquina inferior derecha */
+    .btn-acceso-docente {
+      position: fixed;
+      bottom: 12px;
+      right: 14px;
+      z-index: 40;
+      background: rgba(8, 47, 73, 0.78);
+      color: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .btn-acceso-docente:hover {
+      background: var(--madera);
+      color: var(--dorado);
+    }
+
+    /* =====================================================================
+       VISTA 2: INSTRUCCIONES
+       ===================================================================== */
+    .panel-instrucciones {
+      max-width: 1080px;
+      margin: 24px auto;
+      background: var(--pergamino);
+      border: 5px solid var(--madera-clara);
+      border-radius: 24px;
+      box-shadow: 0 0 0 4px var(--dorado-borde), var(--sombra-panel);
+      padding: 28px 24px;
+    }
+
+    .cabecera-instrucciones {
+      text-align: center;
+      padding-bottom: 16px;
+      margin-bottom: 22px;
+      border-bottom: 3px double var(--madera-clara);
+    }
+
+    .cabecera-instrucciones h1 {
+      color: var(--madera);
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      margin-bottom: 6px;
+    }
+
+    .grid-instrucciones {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .card-instruccion {
+      background: #ffffff;
+      border: 2px solid #dfc395;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-instruccion h2 {
+      font-size: 1.1rem;
+      color: var(--madera);
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #f5e6c8;
+    }
+
+    .card-instruccion p,
+    .card-instruccion li {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #333333;
+    }
+
+    .card-instruccion ul {
+      padding-left: 18px;
+    }
+
+    .card-instruccion li {
+      margin-bottom: 6px;
+    }
+
+    .pie-instrucciones {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* =====================================================================
+       VISTA 3: JUEGO (HUD + ARCHIPIÉLAGO DE 6 ISLAS)
+       ===================================================================== */
+    .hud-barra-superior {
+      background: linear-gradient(90deg, #2d1203 0%, #5c2808 50%, #2d1203 100%);
+      color: #ffffff;
+      padding: 12px 18px;
+      border-bottom: 4px solid var(--dorado-borde);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .hud-bloque {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .hud-chip {
+      background: rgba(0, 0, 0, 0.36);
+      border: 1px solid rgba(255, 215, 0, 0.45);
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+    }
+
+    .hud-chip strong {
+      color: var(--dorado);
+    }
+
+    .hud-progreso-box {
+      flex: 1;
+      min-width: 180px;
+      max-width: 280px;
+    }
+
+    .hud-progreso-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--dorado);
+      margin-bottom: 4px;
+    }
+
+    .progreso-pista {
+      width: 100%;
+      height: 13px;
+      background: #1a0b02;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--dorado-borde);
+    }
+
+    .progreso-relleno {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #facc15 0%, #22c55e 100%);
+      transition: width 0.45s ease;
+    }
+
+    .btn-hud {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      border-radius: 10px;
+      padding: 6px 11px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-hud:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .contenedor-archipielago {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 18px 16px 34px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .banner-notificacion {
+      min-height: 26px;
+      background: rgba(255, 251, 235, 0.96);
+      color: var(--madera);
+      border: 2px solid var(--dorado-borde);
+      border-radius: 12px;
+      padding: 7px 18px;
+      font-weight: 800;
+      font-size: 0.94rem;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .banner-notificacion.visible {
+      opacity: 1;
+    }
+
+    /* Cuadrícula de Islas + Gran Cofre sin líneas SVG */
+    .grid-archipielago {
+      width: 100%;
+      background: radial-gradient(circle at center, rgba(255, 251, 235, 0.22) 0%, rgba(8, 47, 73, 0.52) 100%);
+      border: 5px solid var(--dorado-borde);
+      border-radius: 26px;
+      box-shadow: inset 0 0 36px rgba(0, 0, 0, 0.35), var(--sombra-panel);
+      padding: 24px 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .tarjeta-isla {
+      background: var(--pergamino);
+      border: 4px solid var(--madera-clara);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .tarjeta-isla.activa {
+      border-color: var(--dorado);
+      animation: pulsoIsla 2s infinite;
+    }
+    .tarjeta-isla.activa:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    .tarjeta-isla.completada {
+      background: #dcfce7;
+      border-color: var(--verde);
+    }
+
+    .tarjeta-isla.bloqueada {
+      filter: grayscale(0.85) brightness(0.76);
+      cursor: not-allowed;
+    }
+
+    .icono-isla {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 2px solid #dfc395;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .isla-numero-tag {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--madera-clara);
+      text-transform: uppercase;
+    }
+
+    .isla-nombre-txt {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: var(--texto);
+      margin: 2px 0 4px;
+    }
+
+    .isla-estado-txt {
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .tarjeta-cofre-final {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, #fef08a 0%, #f59e0b 100%);
+      border: 4px solid var(--madera);
+      border-radius: 22px;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.42);
+      transition: transform 0.2s ease;
+    }
+
+    .tarjeta-cofre-final.bloqueado {
+      filter: grayscale(0.88) brightness(0.75);
+      cursor: not-allowed;
+    }
+
+    .tarjeta-cofre-final.desbloqueado {
+      animation: brillarCofre 1.2s ease-in-out infinite alternate;
+    }
+    .tarjeta-cofre-final.desbloqueado:hover {
+      transform: scale(1.02);
+    }
+
+    /* =====================================================================
+       ELEMENTOS VISUALES MATEMÁTICOS EN HTML/CSS PURO (SIN SVG)
+       ===================================================================== */
+    .visual-contenedor {
+      background: #ffffff;
+      border: 2px solid #e2cbb0;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 96px;
+    }
+
+    .tarjeta-figura-css {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 14px;
+      background: #fffbeb;
+      border: 2px solid #fde68a;
+    }
+
+    /* Formas geométricas CSS puras */
+    .forma-cuadrado {
+      width: 76px;
+      height: 76px;
+      background: #fde047;
+      border: 4px solid #854d0e;
+    }
+
+    .forma-rectangulo {
+      width: 120px;
+      height: 66px;
+      background: #bae6fd;
+      border: 4px solid #0369a1;
+    }
+
+    .forma-rombo {
+      width: 64px;
+      height: 64px;
+      background: #f9a8d4;
+      border: 4px solid #9d174d;
+      transform: rotate(45deg);
+      margin: 12px;
+    }
+
+    .forma-romboide {
+      width: 112px;
+      height: 62px;
+      background: #bbf7d0;
+      border: 4px solid #15803d;
+      transform: skewX(-22deg);
+    }
+
+    .forma-trapecio {
+      width: 126px;
+      height: 0;
+      border-bottom: 64px solid #fdba74;
+      border-left: 26px solid transparent;
+      border-right: 26px solid transparent;
+    }
+
+    .forma-triangulo-css {
+      width: 0;
+      height: 0;
+      border-left: 48px solid transparent;
+      border-right: 48px solid transparent;
+      border-bottom: 78px solid #93c5fd;
+    }
+
+    .etiquetas-medidas {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.94rem;
+      color: var(--madera);
+    }
+
+    .chip-dato {
+      background: #fef3c7;
+      border: 1.5px solid #d97706;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    /* Notación matemática de segmento con línea superior */
+    .seg {
+      text-decoration: overline;
+      text-decoration-thickness: 2px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+
+    /* Secuencias visuales con emojis y bloques */
+    .secuencia-fila {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 1.55rem;
+      font-weight: 800;
+    }
+
+    .paso-secuencia {
+      background: #f8fafc;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 8px 12px;
+      min-width: 56px;
+      text-align: center;
+    }
+
+    .paso-incognita {
+      background: #fee2e2;
+      border: 2.5px dashed #dc2626;
+      color: #dc2626;
+      border-radius: 12px;
+      padding: 8px 14px;
+      font-weight: 900;
+    }
+
+    /* Barras de fracciones con bloques CSS puros */
+    .barra-fraccion-wrapper {
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .barra-fraccion-titulo {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--madera);
+      text-align: left;
+    }
+
+    .barra-celdas {
+      display: flex;
+      width: 100%;
+      height: 32px;
+      border: 2.5px solid #1c1917;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f1f5f9;
+    }
+
+    .celda-fraccion {
+      flex: 1;
+      border-right: 1.5px solid #475569;
+      background: #f1f5f9;
+    }
+    .celda-fraccion:last-child {
+      border-right: none;
+    }
+    .celda-fraccion.llena-oro {
+      background: #facc15;
+    }
+    .celda-fraccion.llena-naranja {
+      background: #fb923c;
+    }
+    .celda-fraccion.llena-verde {
+      background: #4ade80;
+    }
+    .celda-fraccion.llena-azul {
+      background: #38bdf8;
+    }
+
+    /* =====================================================================
+       MODALES (DESAFÍOS, BITÁCORA DE LLAVES, COFRE, REGALO SORPRESA, DOCENTE)
+       ===================================================================== */
+    .modal-capa {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+    .modal-capa.activo {
+      display: flex;
+    }
+
+    .modal-ventana {
+      width: 100%;
+      max-width: 720px;
+      max-height: 92vh;
+      overflow-y: auto;
+      background: var(--pergamino);
+      border: 5px solid var(--madera-clara);
+      border-radius: 22px;
+      box-shadow: 0 0 0 4px var(--dorado), 0 22px 50px rgba(0, 0, 0, 0.65);
+      padding: 24px 26px;
+      animation: aparecerModal 0.24s ease;
+    }
+
+    .modal-encabezado {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #dfc395;
+    }
+
+    .badge-modal {
+      display: inline-block;
+      background: var(--madera);
+      color: var(--dorado);
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
+      margin-bottom: 5px;
+    }
+
+    .modal-encabezado h2 {
+      color: var(--madera);
+      font-size: 1.25rem;
+    }
+
+    .btn-cerrar-x {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: var(--rojo);
+      color: #ffffff;
+      font-weight: 800;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .cinta-paso {
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      color: #78350f;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 7px 12px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+    }
+
+    .enunciado-desafio {
+      font-size: 1.08rem;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .grid-opciones {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      gap: 10px;
+    }
+
+    .opcion-item {
+      background: #ffffff;
+      border: 3px solid #d6b88d;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+    .opcion-item:hover {
+      border-color: var(--mar);
+      background: #f0f9ff;
+    }
+    .opcion-item.seleccionada {
+      background: #bae6fd;
+      border-color: #0369a1;
+      color: #0c4a6e;
+    }
+
+    .inputs-numericos-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-weight: 700;
+    }
+
+    .fraccion-caja {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .linea-divisoria {
+      width: 78px;
+      height: 4px;
+      background: #1c1917;
+      border-radius: 2px;
+    }
+
+    .campo-numero {
+      width: 84px;
+      padding: 8px;
+      font-size: 1.2rem;
+      font-weight: 800;
+      text-align: center;
+      border: 3px solid var(--madera-clara);
+      border-radius: 10px;
+    }
+
+    .caja-feedback {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.96rem;
+      display: none;
+    }
+    .caja-feedback.correcto {
+      display: block;
+      background: #dcfce7;
+      color: #14532d;
+      border: 2px solid #22c55e;
+    }
+    .caja-feedback.incorrecto {
+      display: block;
+      background: #fee2e2;
+      color: #7f1d1d;
+      border: 2px solid #ef4444;
+    }
+
+    /* Tarjeta de Llave Secreta al completar una Isla */
+    .tarjeta-llave-ganada {
+      background: linear-gradient(135deg, #fffbeb 0%, #fef08a 100%);
+      border: 3px solid var(--dorado-borde);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .codigo-llave-destacado {
+      display: inline-block;
+      margin: 8px 0;
+      padding: 8px 22px;
+      background: var(--madera);
+      color: var(--dorado);
+      border: 3px solid var(--dorado);
+      border-radius: 14px;
+      font-size: 1.55rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+    }
+
+    /* Bitácora de Llaves (Modal) */
+    .grid-bitacora-modal {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .item-bitacora {
+      background: #ffffff;
+      border: 2.5px solid #d6b88d;
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+    }
+    .item-bitacora.desbloqueado {
+      border-color: var(--verde);
+      background: #f0fdf4;
+    }
+    .item-bitacora label {
+      display: block;
+      font-weight: 800;
+      font-size: 0.88rem;
+      color: var(--madera);
+      margin-bottom: 6px;
+    }
+    .item-bitacora input {
+      width: 78px;
+      padding: 7px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      text-align: center;
+      border: 2px solid #94a3b8;
+      border-radius: 10px;
+    }
+
+    /* Cerradura de 6 casillas del Gran Cofre */
+    .grid-cerradura {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .slot-cerradura {
+      background: #ffffff;
+      border: 2.5px solid var(--madera-clara);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+    }
+    .slot-cerradura label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: var(--madera);
+      margin-bottom: 6px;
+    }
+    .input-codigo-cofre {
+      width: 76px;
+      padding: 8px;
+      font-size: 1.3rem;
+      font-weight: 900;
+      text-align: center;
+      border: 2.5px solid #b45309;
+      border-radius: 10px;
+      background: #fffbeb;
+    }
+
+    /* Regalo Sorpresa y Diploma dentro del Cofre */
+    .regalo-cofre-panel {
+      background: linear-gradient(145deg, #fffbeb 0%, #fef08a 52%, #fde047 100%);
+      border: 3px solid var(--dorado-borde);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 14px 0;
+    }
+
+    .lluvia-tesoro {
+      font-size: 1.7rem;
+      letter-spacing: 6px;
+      margin-bottom: 8px;
+      animation: flotarItem 2s ease-in-out infinite;
+    }
+
+    .medalla-diploma {
+      background: #ffffff;
+      border: 3px double var(--madera);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+
+    .resumen-estadisticas {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border: 2px solid var(--dorado-borde);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .stat-card span {
+      display: block;
+      font-size: 0.82rem;
+      color: #57534e;
+    }
+    .stat-card strong {
+      font-size: 1.25rem;
+      color: var(--madera);
+    }
+
+    /* Tabla Privada Docente */
+    .tabla-scroll {
+      width: 100%;
+      overflow-x: auto;
+      background: #ffffff;
+      border: 2px solid #dfc395;
+      border-radius: 12px;
+      margin: 14px 0;
+      max-height: 320px;
+    }
+
+    .tabla-notas {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      text-align: left;
+    }
+    .tabla-notas th {
+      background: var(--madera);
+      color: var(--dorado);
+      padding: 9px 10px;
+      position: sticky;
+      top: 0;
+      white-space: nowrap;
+    }
+    .tabla-notas td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #eee2cc;
+      white-space: nowrap;
+    }
+    .tabla-notas tr:nth-child(even) td {
+      background: #fcf8f0;
+    }
+
+    .modal-pie {
+      margin-top: 18px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .oculto {
+      display: none !important;
+    }
+
+    .centrado {
+      text-align: center;
+    }
+
+    /* =====================================================================
+       ANIMACIONES CSS
+       ===================================================================== */
+    @keyframes navegarBarco {
+      0% { left: -180px; }
+      100% { left: 106%; }
+    }
+    @keyframes mecerBarco {
+      0%, 100% { transform: translateY(0) rotate(-3deg); }
+      50% { transform: translateY(-9px) rotate(3deg); }
+    }
+    @keyframes moverOla {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes cruzarNube {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(calc(100vw + 360px)); }
+    }
+    @keyframes pulsarSol {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.08); }
+    }
+    @keyframes girarBrujula {
+      0%, 100% { transform: rotate(-18deg); }
+      50% { transform: rotate(22deg); }
+    }
+    @keyframes latidoTitulo {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.025); }
+    }
+    @keyframes brillarCofre {
+      0% { transform: scale(1); filter: drop-shadow(0 0 4px gold); }
+      100% { transform: scale(1.05); filter: drop-shadow(0 0 16px gold); }
+    }
+    @keyframes flotarItem {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-13px) rotate(8deg); }
+    }
+    @keyframes pulsoIsla {
+      0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.75); }
+      70% { box-shadow: 0 0 0 13px rgba(255, 215, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+    }
+    @keyframes aparecerModal {
+      from { opacity: 0; transform: scale(0.93); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 720px) {
+      .resumen-estadisticas {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Fondo animado del océano -->
+  <div class="oceano-escena" aria-hidden="true">
+    <div class="sol-brillante"></div>
+    <div class="nube-css nube-1"></div>
+    <div class="nube-css nube-2"></div>
+    <div class="barco-pirata-flotante">⛵🏴‍☠️</div>
+    <div class="ola-css ola-1"></div>
+    <div class="ola-css ola-2"></div>
+    <div class="ola-css ola-3"></div>
+  </div>
+
+  <!-- Monedas flotantes -->
+  <div class="moneda-decorativa md-1" aria-hidden="true">🪙</div>
+  <div class="moneda-decorativa md-2" aria-hidden="true">🪙</div>
+  <div class="moneda-decorativa md-3" aria-hidden="true">🪙</div>
+  <div class="moneda-decorativa md-4" aria-hidden="true">🪙</div>
+
+  <!-- ===================================================================
+       VISTA 1: INICIO
+       =================================================================== -->
+  <section id="vista-inicio" class="vista activa">
+    <div class="pergamino-inicio">
+      <div class="brujula-badge" title="Brújula de Arquímedes">🧭</div>
+      <div class="etiqueta-nivel">⚓ LABORATORIO VIRTUAL • 5.º GRADO ⚓</div>
+      <h1 class="titulo-juego">🏴‍☠️ La Búsqueda del Tesoro Matemático</h1>
+      <p class="intro-historia">
+        El legendario <strong>Capitán Arquímedes</strong> escondió su gran tesoro en <strong>6 islas</strong>.
+        Al superar cada isla ganarás una <strong>llave con un número secreto</strong> para abrir la cerradura del Gran Cofre. Cada acierto suma <strong>100 puntos</strong>.
+      </p>
+
+      <div class="resumen-islas-inicio">
+        <div class="lista-ruta-inicio">
+          🔺 Isla 1: Geometría y Ángulos ➔ 📐 Isla 2: Elementos del Triángulo<br />
+          🧩 Isla 3: Secuencias Visuales ➔ ⚖️ Isla 4: Amplificar y Simplificar<br />
+          📊 Isla 5: Gráficas de Fracciones ➔ 🕵️ Isla 6: Problemas ➔ 👑 Gran Cofre
+        </div>
+        <div class="cofre-emoji-inicio" title="Gran Cofre del Tesoro">👑📦</div>
+      </div>
+
+      <div class="caja-input-nombre">
+        <label for="input-nombre-estudiante">🧑‍🎓 Nombre completo del estudiante:</label>
+        <input
+          type="text"
+          id="input-nombre-estudiante"
+          placeholder="Escribe tu nombre y apellido aquí..."
+          autocomplete="off"
+        />
+        <div id="error-nombre" class="texto-error"></div>
+      </div>
+
+      <div class="botones-inicio">
+        <button type="button" id="btn-comenzar-aventura" class="btn btn-dorado">
+          ⚔️ Comenzar Aventura
+        </button>
+        <button type="button" id="btn-ir-instrucciones" class="btn btn-azul">
+          📜 Instrucciones
+        </button>
+      </div>
+    </div>
+
+    <!-- Acceso exclusivo para el docente -->
+    <button type="button" id="btn-acceso-docente" class="btn-acceso-docente">
+      🔐 Acceso Docente
+    </button>
+  </section>
+
+  <!-- ===================================================================
+       VISTA 2: INSTRUCCIONES
+       =================================================================== -->
+  <section id="vista-instrucciones" class="vista">
+    <div class="panel-instrucciones">
+      <header class="cabecera-instrucciones">
+        <h1>📜 Bitácora e Instrucciones de la Expedición</h1>
+        <p>Lee las reglas del Capitán Arquímedes antes de zarpar hacia las 6 islas.</p>
+      </header>
+
+      <div class="grid-instrucciones">
+        <article class="card-instruccion">
+          <h2>🏴‍☠️ Historia del Capitán Arquímedes</h2>
+          <p>Antes de desaparecer, el Capitán Arquímedes dividió su mapa en <strong>6 islas</strong>. Cada isla protege una llave con un código numérico secreto. Solo quien resuelva los <strong>36 desafíos</strong> reunirá las 6 llaves y abrirá el cofre.</p>
+        </article>
+
+        <article class="card-instruccion">
+          <h2>🎯 Objetivo y Cómo Jugar</h2>
+          <ul>
+            <li>Ingresa tu nombre completo en la pantalla de inicio.</li>
+            <li>Haz clic en la isla disponible para resolver sus <strong>6 desafíos</strong>.</li>
+            <li>Selecciona la respuesta correcta o escribe los números solicitados y presiona <strong>Verificar respuesta</strong>.</li>
+          </ul>
+        </article>
+
+        <article class="card-instruccion">
+          <h2>🗝️ Llaves con Códigos y Bitácora</h2>
+          <p>Al terminar cada isla recibirás una llave y un <strong>número secreto</strong>. Puedes anotarlo en el botón <strong>📓 Bitácora de Llaves</strong> del panel superior para tenerlo listo al abrir el Gran Cofre.</p>
+        </article>
+
+        <article class="card-instruccion">
+          <h2>🔐 Cerradura del Gran Cofre</h2>
+          <p>Cuando reúnas las <strong>6 llaves</strong>, haz clic en el <strong>Gran Cofre del Tesoro</strong> e ingresa los 6 códigos numéricos en sus casillas correspondientes para descubrir el regalo sorpresa y tu diploma.</p>
+        </article>
+
+        <article class="card-instruccion">
+          <h2>💯 Puntuación y Vidas</h2>
+          <ul>
+            <li><strong>Puntuación:</strong> Cada ejercicio resuelto correctamente otorga <strong>100 puntos</strong> (36 ejercicios = <strong>3,600 puntos máximos</strong>).</li>
+            <li><strong>Vidas:</strong> Comienzas con <strong>5 corazones (❤️)</strong>; cada error resta 1 corazón y te brinda una pista.</li>
+          </ul>
+        </article>
+
+        <article class="card-instruccion">
+          <h2>⏱️ Cronómetro, Progreso y Audio</h2>
+          <ul>
+            <li><strong>Cronómetro:</strong> Registra el tiempo total de tu misión.</li>
+            <li><strong>Barra de Progreso:</strong> Muestra tu avance de 0% a 100% conforme conquistas islas.</li>
+            <li><strong>Música:</strong> Usa el botón de música en la barra superior para activarla o silenciarla.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="pie-instrucciones">
+        <button type="button" id="btn-volver-inicio" class="btn btn-azul">⬅️ Volver al Inicio</button>
+        <button type="button" id="btn-comenzar-mision" class="btn btn-dorado">🚀 Comenzar Misión</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================
+       VISTA 3: JUEGO (ARCHIPIÉLAGO DE 6 ISLAS)
+       =================================================================== -->
+  <section id="vista-juego" class="vista">
+    <header class="hud-barra-superior">
+      <div class="hud-bloque">
+        <span class="hud-chip">🧑‍🎓 <strong id="hud-nombre">Explorador</strong></span>
+        <span class="hud-chip" id="hud-vidas" aria-label="Vidas">❤️❤️❤️❤️❤️</span>
+      </div>
+
+      <div class="hud-progreso-box">
+        <div class="hud-progreso-info">
+          <span>Progreso de Misión</span>
+          <span id="hud-porcentaje">0%</span>
+        </div>
+        <div class="progreso-pista">
+          <div id="hud-barra" class="progreso-relleno"></div>
+        </div>
+      </div>
+
+      <div class="hud-bloque">
+        <span class="hud-chip">🪙 <strong id="hud-puntos">0</strong> pts</span>
+        <span class="hud-chip">🗝️ <strong id="hud-llaves">0</strong>/6</span>
+        <span class="hud-chip">⏱️ <strong id="hud-tiempo">00:00</strong></span>
+        <button type="button" id="btn-abrir-bitacora" class="btn-hud">📓 Bitácora de Llaves</button>
+        <button type="button" id="btn-toggle-musica" class="btn-hud">🎵 Música ON</button>
+        <button type="button" id="btn-hud-instrucciones" class="btn-hud" title="Instrucciones">📜</button>
+        <button type="button" id="btn-hud-inicio" class="btn-hud" title="Inicio">🏠</button>
+      </div>
+    </header>
+
+    <main class="contenedor-archipielago">
+      <div id="banner-notificacion" class="banner-notificacion"></div>
+
+      <div class="grid-archipielago">
+        <!-- Isla 1 -->
+        <button type="button" id="isla-btn-0" class="tarjeta-isla activa">
+          <div class="icono-isla">🔺</div>
+          <div>
+            <div class="isla-numero-tag">Isla 1 • 6 desafíos</div>
+            <div class="isla-nombre-txt">Geometría: Triángulos, Cuadriláteros y Ángulos</div>
+            <div id="isla-estado-0" class="isla-estado-txt">⚔️ Disponible</div>
+          </div>
+        </button>
+
+        <!-- Isla 2 -->
+        <button type="button" id="isla-btn-1" class="tarjeta-isla bloqueada">
+          <div class="icono-isla">📐</div>
+          <div>
+            <div class="isla-numero-tag">Isla 2 • 6 desafíos</div>
+            <div class="isla-nombre-txt">Construcción y Elementos del Triángulo</div>
+            <div id="isla-estado-1" class="isla-estado-txt">🔒 Bloqueada</div>
+          </div>
+        </button>
+
+        <!-- Isla 3 -->
+        <button type="button" id="isla-btn-2" class="tarjeta-isla bloqueada">
+          <div class="icono-isla">🧩</div>
+          <div>
+            <div class="isla-numero-tag">Isla 3 • 6 desafíos</div>
+            <div class="isla-nombre-txt">Razonamiento Abstracto y Secuencias</div>
+            <div id="isla-estado-2" class="isla-estado-txt">🔒 Bloqueada</div>
+          </div>
+        </button>
+
+        <!-- Isla 4 -->
+        <button type="button" id="isla-btn-3" class="tarjeta-isla bloqueada">
+          <div class="icono-isla">⚖️</div>
+          <div>
+            <div class="isla-numero-tag">Isla 4 • 6 desafíos</div>
+            <div class="isla-nombre-txt">Amplificación y Simplificación</div>
+            <div id="isla-estado-3" class="isla-estado-txt">🔒 Bloqueada</div>
+          </div>
+        </button>
+
+        <!-- Isla 5 -->
+        <button type="button" id="isla-btn-4" class="tarjeta-isla bloqueada">
+          <div class="icono-isla">📊</div>
+          <div>
+            <div class="isla-numero-tag">Isla 5 • 6 desafíos</div>
+            <div class="isla-nombre-txt">Representación Gráfica de Fracciones</div>
+            <div id="isla-estado-4" class="isla-estado-txt">🔒 Bloqueada</div>
+          </div>
+        </button>
+
+        <!-- Isla 6 -->
+        <button type="button" id="isla-btn-5" class="tarjeta-isla bloqueada">
+          <div class="icono-isla">🕵️</div>
+          <div>
+            <div class="isla-numero-tag">Isla 6 • 6 desafíos</div>
+            <div class="isla-nombre-txt">Resolución de Problemas</div>
+            <div id="isla-estado-5" class="isla-estado-txt">🔒 Bloqueada</div>
+          </div>
+        </button>
+
+        <!-- Gran Cofre del Tesoro -->
+        <button type="button" id="btn-cofre-tesoro" class="tarjeta-cofre-final bloqueado">
+          <div style="font-size: 2.5rem;">👑📦</div>
+          <div style="text-align: left;">
+            <strong style="display: block; font-size: 1.15rem; color: var(--madera);">Gran Cofre del Tesoro</strong>
+            <span id="estado-cofre-txt" style="font-size: 0.9rem; font-weight: 700; color: #451a03;">
+              Requiere las 6 llaves numeradas
+            </span>
+          </div>
+        </button>
+      </div>
+    </main>
+  </section>
+
+  <!-- ===================================================================
+       MODAL DE DESAFÍO DE ISLA
+       =================================================================== -->
+  <div id="modal-desafio" class="modal-capa" role="dialog" aria-modal="true">
+    <div class="modal-ventana">
+      <div class="modal-encabezado">
+        <div>
+          <span id="modal-badge" class="badge-modal">ISLA 1 DE 6</span>
+          <h2 id="modal-titulo">Título de la Isla</h2>
+        </div>
+        <button type="button" id="btn-cerrar-desafio" class="btn-cerrar-x" aria-label="Cerrar">✖</button>
+      </div>
+
+      <div id="modal-paso" class="cinta-paso">Desafío 1 de 6 • Recompensa: +100 puntos</div>
+      <p id="modal-pregunta" class="enunciado-desafio"></p>
+      <div id="modal-visual" class="visual-contenedor"></div>
+      <div id="modal-respuesta"></div>
+      <div id="modal-feedback" class="caja-feedback"></div>
+
+      <!-- Celebración de Llave + Código Secreto al terminar la isla -->
+      <div id="panel-llave-conquistada" class="tarjeta-llave-ganada oculto">
+        <div style="font-weight: 900; color: var(--madera); font-size: 1.08rem;">
+          🎉 ¡ISLA SUPERADA! HAS GANADO UNA LLAVE DORADA
+        </div>
+        <div id="texto-codigo-llave" class="codigo-llave-destacado">🗝️ Llave 1 — Código: 4</div>
+        <div style="font-size: 0.92rem; font-weight: 700; color: #451a03;">
+          ✍️ Anota este código numérico en tu Bitácora de Llaves para abrir la cerradura del Gran Cofre.
+        </div>
+      </div>
+
+      <div class="modal-pie">
+        <button type="button" id="btn-verificar" class="btn btn-dorado">✔️ Verificar respuesta</button>
+        <button type="button" id="btn-siguiente" class="btn btn-azul oculto">➡️ Siguiente desafío</button>
+        <button type="button" id="btn-reclamar-llave" class="btn btn-verde oculto">🗝️ Guardar Llave en Bitácora</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL DE BITÁCORA DE LLAVES (ANOTAR Y CONSULTAR)
+       =================================================================== -->
+  <div id="modal-bitacora" class="modal-capa" role="dialog" aria-modal="true">
+    <div class="modal-ventana centrado">
+      <div class="modal-encabezado" style="text-align: left;">
+        <div>
+          <span class="badge-modal">CUADERNO DE EXPLORACIÓN</span>
+          <h2>📓 Bitácora de Llaves Secretas</h2>
+        </div>
+        <button type="button" id="btn-cerrar-bitacora" class="btn-cerrar-x" aria-label="Cerrar">✖</button>
+      </div>
+
+      <p style="font-size: 0.96rem; line-height: 1.5;">
+        Aquí puedes anotar o consultar los <strong>6 códigos numéricos</strong> obtenidos al conquistar cada isla:
+      </p>
+
+      <div class="grid-bitacora-modal">
+        <div class="item-bitacora" id="bit-card-0">
+          <label for="bit-input-0">🗝️ Llave Isla 1</label>
+          <input type="number" id="bit-input-0" placeholder="?" />
+          <div id="bit-status-0" style="font-size: 0.78rem; margin-top: 4px; font-weight: 700;">🔒 Pendiente</div>
+        </div>
+        <div class="item-bitacora" id="bit-card-1">
+          <label for="bit-input-1">🗝️ Llave Isla 2</label>
+          <input type="number" id="bit-input-1" placeholder="?" />
+          <div id="bit-status-1" style="font-size: 0.78rem; margin-top: 4px; font-weight: 700;">🔒 Pendiente</div>
+        </div>
+        <div class="item-bitacora" id="bit-card-2">
+          <label for="bit-input-2">🗝️ Llave Isla 3</label>
+          <input type="number" id="bit-input-2" placeholder="?" />
+          <div id="bit-status-2" style="font-size: 0.78rem; margin-top: 4px; font-weight: 700;">🔒 Pendiente</div>
+        </div>
+        <div class="item-bitacora" id="bit-card-3">
+          <label for="bit-input-3">🗝️ Llave Isla 4</label>
+          <input type="number" id="bit-input-3" placeholder="?" />
+          <div id="bit-status-3" style="font-size: 0.78rem; margin-top: 4px; font-weight: 700;">🔒 Pendiente</div>
+        </div>
+        <div class="item-bitacora" id="bit-card-4">
+          <label for="bit-input-4">🗝️ Llave Isla 5</label>
+          <input type="number" id="bit-input-4" placeholder="?" />
+          <div id="bit-status-4" style="font-size: 0.78rem; margin-top: 4px; font-weight: 700;">🔒 Pendiente</div>
+        </div>
+        <div class="item-bitacora" id="bit-card-5">
+          <label for="bit-input-5">🗝️ Llave Isla 6</label>
+          <input type="number" id="bit-input-5" placeholder="?" />
+          <div id="bit-status-5" style="font-size: 0.78rem; margin-top: 4px; font-weight: 700;">🔒 Pendiente</div>
+        </div>
+      </div>
+
+      <div id="feedback-bitacora" class="caja-feedback"></div>
+
+      <div class="modal-pie" style="justify-content: center;">
+        <button type="button" id="btn-autocompletar-desbloqueadas" class="btn btn-azul">
+          🔍 Mostrar mis llaves ganadas
+        </button>
+        <button type="button" id="btn-guardar-anotaciones" class="btn btn-dorado">
+          💾 Guardar anotaciones
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL CERRADURA DEL GRAN COFRE (6 CÓDIGOS NUMÉRICOS)
+       =================================================================== -->
+  <div id="modal-cerradura" class="modal-capa" role="dialog" aria-modal="true">
+    <div class="modal-ventana centrado">
+      <div class="modal-encabezado" style="text-align: left;">
+        <div>
+          <span class="badge-modal">CERRADURA MAESTRA DE ARQUÍMEDES</span>
+          <h2>🔐 Ingresa los 6 Códigos de tus Llaves</h2>
+        </div>
+        <button type="button" id="btn-cerrar-cerradura" class="btn-cerrar-x" aria-label="Cerrar">✖</button>
+      </div>
+
+      <p style="font-size: 0.96rem; line-height: 1.5;">
+        Escribe el número secreto de cada una de las 6 islas en su cerradura correspondiente:
+      </p>
+
+      <div class="grid-cerradura">
+        <div class="slot-cerradura">
+          <label for="cofre-cod-0">🗝️ Llave 1</label>
+          <input type="number" id="cofre-cod-0" class="input-codigo-cofre" placeholder="?" />
+        </div>
+        <div class="slot-cerradura">
+          <label for="cofre-cod-1">🗝️ Llave 2</label>
+          <input type="number" id="cofre-cod-1" class="input-codigo-cofre" placeholder="?" />
+        </div>
+        <div class="slot-cerradura">
+          <label for="cofre-cod-2">🗝️ Llave 3</label>
+          <input type="number" id="cofre-cod-2" class="input-codigo-cofre" placeholder="?" />
+        </div>
+        <div class="slot-cerradura">
+          <label for="cofre-cod-3">🗝️ Llave 4</label>
+          <input type="number" id="cofre-cod-3" class="input-codigo-cofre" placeholder="?" />
+        </div>
+        <div class="slot-cerradura">
+          <label for="cofre-cod-4">🗝️ Llave 5</label>
+          <input type="number" id="cofre-cod-4" class="input-codigo-cofre" placeholder="?" />
+        </div>
+        <div class="slot-cerradura">
+          <label for="cofre-cod-5">🗝️ Llave 6</label>
+          <input type="number" id="cofre-cod-5" class="input-codigo-cofre" placeholder="?" />
+        </div>
+      </div>
+
+      <div id="feedback-cerradura" class="caja-feedback"></div>
+
+      <div class="modal-pie" style="justify-content: center;">
+        <button type="button" id="btn-ver-bitacora-desde-cofre" class="btn btn-azul">
+          📓 Consultar Bitácora
+        </button>
+        <button type="button" id="btn-desbloquear-cofre" class="btn btn-dorado">
+          🔓 Abrir Gran Cofre
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL VICTORIA: REGALO SORPRESA + DIPLOMA PERSONALIZADO
+       =================================================================== -->
+  <div id="modal-victoria" class="modal-capa" role="dialog" aria-modal="true">
+    <div class="modal-ventana centrado">
+      <div style="font-size: 2.3rem; margin-bottom: 6px;">🎉🏆🏴‍☠️💎👑🎉</div>
+      <h2 style="color: var(--madera); font-size: 1.65rem; margin-bottom: 8px;">
+        ¡Gran Cofre del Tesoro Abierto!
+      </h2>
+
+      <div class="regalo-cofre-panel">
+        <div id="lluvia-monedas-victoria" class="lluvia-tesoro">🪙 💎 👑 🪙 🏆 💎 🪙</div>
+        <div style="font-weight: 900; font-size: 1.12rem; color: var(--madera);">
+          🎁 ¡REGALO SORPRESA DESBLOQUEADO!
+        </div>
+
+        <div class="medalla-diploma">
+          <div style="font-size: 2rem; margin-bottom: 4px;">🏅📜</div>
+          <div style="font-size: 0.85rem; font-weight: 800; color: var(--madera-clara); text-transform: uppercase;">
+            Diploma Oficial del Capitán Arquímedes
+          </div>
+          <h3 style="color: var(--madera); font-size: 1.2rem; margin: 4px 0;">
+            Gran Maestro Matemático • 5.º Grado
+          </h3>
+          <p style="font-size: 0.96rem; line-height: 1.5; margin-top: 6px;">
+            Otorgado a <strong id="victoria-nombre"></strong> por conquistar las 6 islas, descifrar las 6 llaves y abrir el Cofre Dorado.
+          </p>
+        </div>
+
+        <div style="margin-top: 12px;">
+          <button type="button" id="btn-lanzar-monedas" class="btn btn-verde" style="padding: 9px 18px; font-size: 0.94rem;">
+            ✨ ¡Lanzar Lluvia de Monedas!
+          </button>
+        </div>
+      </div>
+
+      <div class="resumen-estadisticas">
+        <div class="stat-card">
+          <span>Puntaje Total</span>
+          <strong id="victoria-puntos">0 / 3600</strong>
+        </div>
+        <div class="stat-card">
+          <span>Nota sobre 100</span>
+          <strong id="victoria-nota">0 / 100</strong>
+        </div>
+        <div class="stat-card">
+          <span>Tiempo Empleado</span>
+          <strong id="victoria-tiempo">00:00</strong>
+        </div>
+      </div>
+
+      <div class="modal-pie" style="justify-content: center;">
+        <button type="button" id="btn-jugar-de-nuevo" class="btn btn-dorado">🔄 Jugar de nuevo</button>
+        <button type="button" id="btn-victoria-inicio" class="btn btn-azul">🏠 Ir al Inicio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL DERROTA (SIN VIDAS)
+       =================================================================== -->
+  <div id="modal-derrota" class="modal-capa" role="dialog" aria-modal="true">
+    <div class="modal-ventana centrado">
+      <h2 style="color: var(--rojo); font-size: 1.55rem; margin-bottom: 10px;">💀 ¡Te quedaste sin corazones!</h2>
+      <p style="margin-bottom: 10px; line-height: 1.5;">
+        Tus puntos han quedado guardados en el registro. ¡Inténtalo de nuevo para conquistar las 6 islas!
+      </p>
+      <p style="font-weight: 800; margin-bottom: 16px;">
+        Puntaje alcanzado: <span id="derrota-puntos">0</span> pts
+      </p>
+      <div class="modal-pie" style="justify-content: center;">
+        <button type="button" id="btn-reintentar" class="btn btn-dorado">🔄 Intentar de nuevo</button>
+        <button type="button" id="btn-derrota-inicio" class="btn btn-azul">🏠 Ir al Inicio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL PRIVADO DOCENTE (CLAVE: DOCENTE + EXCEL CSV)
+       =================================================================== -->
+  <div id="modal-docente" class="modal-capa" role="dialog" aria-modal="true">
+    <div class="modal-ventana" style="max-width: 860px;">
+      <div class="modal-encabezado">
+        <div>
+          <span class="badge-modal">ÁREA EXCLUSIVA DEL DOCENTE</span>
+          <h2>🔐 Registro de Calificaciones y Exportación Excel</h2>
+        </div>
+        <button type="button" id="btn-cerrar-docente" class="btn-cerrar-x" aria-label="Cerrar">✖</button>
+      </div>
+
+      <div id="docente-login-vista">
+        <p style="margin-bottom: 12px; font-weight: 600;">
+          Ingresa la contraseña docente para ver las calificaciones de tus estudiantes y descargar el Excel:
+        </p>
+        <div class="caja-input-nombre" style="margin-bottom: 10px;">
+          <label for="input-clave-docente">🔑 Contraseña Docente:</label>
+          <input type="password" id="input-clave-docente" placeholder="Escribe la contraseña..." autocomplete="off" />
+          <div id="error-clave-docente" class="texto-error"></div>
+        </div>
+        <div class="modal-pie">
+          <button type="button" id="btn-validar-docente" class="btn btn-dorado">🔓 Entrar al Panel</button>
+        </div>
+      </div>
+
+      <div id="docente-panel-vista" class="oculto">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <strong>📊 Estudiantes registrados: <span id="docente-contador">0</span></strong>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" id="btn-descargar-excel" class="btn btn-excel">
+              📥 Descargar Excel (.csv)
+            </button>
+            <button type="button" id="btn-pedir-borrar-historial" class="btn btn-peligro">
+              🗑️ Limpiar historial
+            </button>
+          </div>
+        </div>
+
+        <div id="docente-mensaje-estado" class="texto-error" style="color: var(--verde);"></div>
+
+        <div id="confirmacion-borrar-box" class="oculto" style="background:#fee2e2; border:2px solid #ef4444; border-radius:12px; padding:10px 14px; margin-top:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <span style="font-weight:700; color:#7f1d1d;">⚠️ ¿Confirmas que deseas borrar todos los registros?</span>
+          <div style="display:flex; gap:8px;">
+            <button type="button" id="btn-borrar-si" class="btn btn-peligro" style="padding:6px 12px;">Sí, borrar</button>
+            <button type="button" id="btn-borrar-no" class="btn btn-azul" style="padding:6px 12px;">Cancelar</button>
+          </div>
+        </div>
+
+        <div class="tabla-scroll">
+          <table class="tabla-notas">
+            <thead>
+              <tr>
+                <th>Estudiante</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Correctos</th>
+                <th>Puntaje (3600)</th>
+                <th>Nota / 100</th>
+                <th>Nota / 10</th>
+                <th>Llaves</th>
+                <th>Tiempo</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-docente"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =====================================================================
+       MÚSICA DE FONDO DRAMÁTICA SINTETIZADA CON WEB AUDIO API (OFFLINE)
+       ===================================================================== */
+    const MusicaExpedicion = (() => {
+      let audioCtx = null;
+      let masterGain = null;
+      let encendida = true;
+      let loopIniciado = false;
+      let paso = 0;
+
+      // Tema épico menor de búsqueda del tesoro (Re menor armónico)
+      const MELODIA = [
+        293.66, 349.23, 440.00, 466.16,
+        440.00, 349.23, 329.63, 293.66,
+        261.63, 293.66, 349.23, 329.63,
+        293.66, 220.00, 277.18, 293.66
+      ];
+      const BAJOS = [146.83, 146.83, 116.54, 110.00];
+
+      function iniciarContexto() {
+        if (!audioCtx) {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return false;
+          audioCtx = new Ctx();
+          masterGain = audioCtx.createGain();
+          masterGain.gain.value = encendida ? 0.08 : 0.0;
+          masterGain.connect(audioCtx.destination);
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume().catch(() => {});
+        }
+        return true;
+      }
+
+      function tocarNota(freq, tiempo, duracion, tipo, volumen) {
+        if (!audioCtx || !masterGain || !encendida) return;
+        const osc = audioCtx.createOscillator();
+        const filtro = audioCtx.createBiquadFilter();
+        const gain = audioCtx.createGain();
+
+        osc.type = tipo;
+        osc.frequency.setValueAtTime(freq, tiempo);
+
+        filtro.type = "lowpass";
+        filtro.frequency.setValueAtTime(750, tiempo);
+
+        gain.gain.setValueAtTime(0.0001, tiempo);
+        gain.gain.linearRampToValueAtTime(volumen, tiempo + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, tiempo + duracion);
+
+        osc.connect(filtro);
+        filtro.connect(gain);
+        gain.connect(masterGain);
+
+        osc.start(tiempo);
+        osc.stop(tiempo + duracion + 0.03);
+      }
+
+      function cicloMusical() {
+        if (!encendida || !audioCtx || audioCtx.state !== "running") return;
+        const ahora = audioCtx.currentTime;
+        const idx = paso % MELODIA.length;
+
+        if (paso % 4 === 0) {
+          const bajo = BAJOS[Math.floor(paso / 4) % BAJOS.length];
+          tocarNota(bajo, ahora, 1.3, "triangle", 0.22);
+        }
+        tocarNota(MELODIA[idx], ahora, 0.42, "sine", 0.16);
+        paso += 1;
+      }
+
+      function activar() {
+        if (!iniciarContexto()) return;
+        if (!loopIniciado) {
+          loopIniciado = true;
+          setInterval(cicloMusical, 430);
+        }
+        if (masterGain && audioCtx) {
+          masterGain.gain.setTargetAtTime(encendida ? 0.08 : 0.0, audioCtx.currentTime, 0.06);
+        }
+        actualizarBoton();
+      }
+
+      function alternar() {
+        encendida = !encendida;
+        if (encendida) activar();
+        if (masterGain && audioCtx) {
+          masterGain.gain.setTargetAtTime(encendida ? 0.08 : 0.0, audioCtx.currentTime, 0.06);
+        }
+        actualizarBoton();
+      }
+
+      function actualizarBoton() {
+        const btn = document.getElementById("btn-toggle-musica");
+        if (btn) {
+          btn.textContent = encendida ? "🎵 Música ON" : "🔇 Música OFF";
+        }
+      }
+
+      return { activar, alternar, actualizarBoton };
+    })();
+
+    /* =====================================================================
+       CONSTANTES DE JUEGO: CLAVE DOCENTE, PUNTAJE Y CÓDIGOS DE LLAVES
+       ===================================================================== */
+    const CLAVE_DOCENTE = "DOCENTE";
+    const PUNTOS_POR_EJERCICIO = 100;
+    const CODIGOS_LLAVES = [4, 7, 2, 9, 5, 8];
+
+    /* =====================================================================
+       BANCO DE 36 DESAFÍOS (6 ISLAS × 6 DESAFÍOS = 3600 PUNTOS MÁXIMOS)
+       SIN NINGÚN GRÁFICO SVG: SOLO HTML, CSS PURO Y EMOJIS/UNICODE
+       ===================================================================== */
+    const ISLAS = [
+      {
+        id: 0,
+        nombre: "Isla 1: Geometría (Triángulos, Cuadriláteros y Ángulos)",
+        desafios: [
+          {
+            tipo: "opcion",
+            pregunta: "Observa este triángulo y las medidas de sus tres lados. ¿Cómo se clasifica según sus lados?",
+            visual: `
+              <div class="tarjeta-figura-css">
+                <div class="forma-triangulo-css"></div>
+                <div class="etiquetas-medidas">
+                  <span class="chip-dato">Lado 1: 8 cm</span>
+                  <span class="chip-dato">Lado 2: 8 cm</span>
+                  <span class="chip-dato">Lado 3: 8 cm</span>
+                </div>
+              </div>
+            `,
+            opciones: [
+              "Triángulo escaleno",
+              "Triángulo isósceles",
+              "Triángulo equilátero",
+              "Trapecio"
+            ],
+            correcta: 2,
+            pista: "Sus tres lados tienen la misma medida (8 cm): es un triángulo equilátero."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Analiza las medidas de este triángulo: dos lados miden 9 cm y el tercero mide 5 cm. ¿Qué tipo de triángulo es?",
+            visual: `
+              <div class="tarjeta-figura-css">
+                <div class="forma-triangulo-css" style="border-bottom-color:#86efac;"></div>
+                <div class="etiquetas-medidas">
+                  <span class="chip-dato">Lado 1: 9 cm</span>
+                  <span class="chip-dato">Lado 2: 9 cm</span>
+                  <span class="chip-dato">Base: 5 cm</span>
+                </div>
+              </div>
+            `,
+            opciones: [
+              "Triángulo escaleno",
+              "Triángulo isósceles",
+              "Triángulo equilátero",
+              "Romboide"
+            ],
+            correcta: 1,
+            pista: "Tiene exactamente dos lados iguales (9 cm) y uno desigual (5 cm): es un triángulo isósceles."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Observa este cuadrilátero de 4 lados iguales con sus ángulos inclinados (como un diamante). ¿Qué cuadrilátero es?",
+            visual: `
+              <div class="tarjeta-figura-css">
+                <div class="forma-rombo"></div>
+                <div class="etiquetas-medidas">
+                  <span class="chip-dato">4 lados iguales • Paralelogramo</span>
+                </div>
+              </div>
+            `,
+            opciones: [
+              "Rombo",
+              "Trapecio",
+              "Rectángulo",
+              "Triángulo escaleno"
+            ],
+            correcta: 0,
+            pista: "El paralelogramo que tiene sus 4 lados iguales y ángulos no rectos es el rombo."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Mira esta figura de 4 lados que tiene únicamente un par de lados paralelos (base mayor y base menor). ¿Cómo se llama?",
+            visual: `
+              <div class="tarjeta-figura-css">
+                <div class="forma-trapecio"></div>
+                <div class="etiquetas-medidas">
+                  <span class="chip-dato">Solo 1 par de lados paralelos</span>
+                </div>
+              </div>
+            `,
+            opciones: [
+              "Cuadrado",
+              "Romboide",
+              "Trapecio",
+              "Rectángulo"
+            ],
+            correcta: 2,
+            pista: "Los cuadriláteros que tienen solo un par de lados paralelos se llaman trapecios."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "¿Cuál de las siguientes características diferencia a un polígono cóncavo de un polígono convexo?",
+            visual: `
+              <div class="tarjeta-figura-css">
+                <div style="font-size:1.7rem;">⭐ vs ⬡</div>
+                <div class="etiquetas-medidas">
+                  <span class="chip-dato">Comparación de ángulos interiores</span>
+                </div>
+              </div>
+            `,
+            opciones: [
+              "El cóncavo tiene al menos un ángulo interior mayor a 180° (hundido hacia adentro)",
+              "El cóncavo siempre tiene exactamente 3 lados",
+              "El convexo tiene todos sus ángulos mayores a 180°",
+              "Ambos tienen siempre todos sus lados curvos"
+            ],
+            correcta: 0,
+            pista: "Una estrella o flecha tiene esquinas hundidas hacia adentro con ángulos mayores a 180°: es cóncava."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Observa estos ejemplos de la vida cotidiana: 🕒 Reloj marcando las 3:00 (90°) y 📖 Un libro abierto completamente plano (180°). ¿Qué pareja de ángulos representan?",
+            visual: `
+              <div class="tarjeta-figura-css">
+                <div class="etiquetas-medidas">
+                  <span class="chip-dato">🕒 Reloj a las 3:00 (90°)</span>
+                  <span class="chip-dato">📖 Libro abierto plano (180°)</span>
+                </div>
+              </div>
+            `,
+            opciones: [
+              "Ángulo agudo y ángulo obtuso",
+              "Ángulo obtuso y ángulo agudo",
+              "Ángulo recto y ángulo llano",
+              "Ángulo llano y ángulo recto"
+            ],
+            correcta: 2,
+            pista: "90° es un ángulo recto (reloj a las 3:00) y 180° es un ángulo llano (libro plano)."
+          }
+        ]
+      },
+      {
+        id: 1,
+        nombre: "Isla 2: Construcción y Elementos del Triángulo",
+        desafios: [
+          {
+            tipo: "opcion",
+            pregunta: "Se construye un triángulo isósceles con base de 5 cm y dos lados iguales de 7 cm cada uno. ¿Cuál es su perímetro total?",
+            visual: `
+              <div class="tarjeta-figura-css">
+                <div class="forma-triangulo-css" style="border-bottom-color:#fde047;"></div>
+                <div class="etiquetas-medidas">
+                  <span class="chip-dato">Lado izquierdo: 7 cm</span>
+                  <span class="chip-dato">Lado derecho: 7 cm</span>
+                  <span class="chip-dato">Base: 5 cm</span>
+                </div>
+              </div>
+            `,
+            opciones: [
+              "12 cm",
+              "19 cm",
+              "21 cm",
+              "14 cm"
+            ],
+            correcta: 1,
+            pista: "Suma los tres lados: 7 cm + 7 cm + 5 cm = 19 cm."
+          },
+          {
+            tipo: "opcion",
+            pregunta: 'En el triángulo con vértices <strong>A, B y C</strong>, ¿cómo se escribe correctamente el lado formado entre los vértices A y B?',
+            visual: `
+              <div class="tarjeta-figura-css">
+                <div style="font-weight:900; font-size:1.15rem; color:var(--madera);">
+                  Vértices del triángulo: A, B, C
+                </div>
+                <div class="etiquetas-medidas">
+                  <span class="chip-dato">Segmento que une A con B</span>
+                </div>
+              </div>
+            `,
+            opciones: [
+              '<span class="seg">AB</span>',
+              '∠ABC',
+              '<span class="seg">ABC</span>',
+              '∠C'
+            ],
+            correcta: 0,
+            pista: 'Los segmentos se nombran con sus dos vértices extremos y una rayita arriba: <span class="seg">AB</span>.'
+          },
+          {
+            tipo: "opcion",
+            pregunta: 'Si en un triángulo de vértices <strong>A, B y C</strong> queremos señalar el ángulo cuya esquina (vértice) está en <strong>B</strong>, ¿qué notación simbólica usamos?',
+            visual: `
+              <div class="tarjeta-figura-css">
+                <div style="font-weight:900; font-size:1.15rem; color:#0369a1;">
+                  Vértice central del ángulo: letra B
+                </div>
+              </div>
+            `,
+            opciones: [
+              '<span class="seg">AB</span>',
+              '<span class="seg">BC</span>',
+              '∠ABC',
+              '<span class="seg">AC</span>'
+            ],
+            correcta: 2,
+            pista: 'El símbolo ∠ va seguido de las tres letras colocando el vértice del ángulo en el centro: ∠ABC.'
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Observa las medidas de un triángulo construido con regla y compás: lados de 6 cm, 8 cm y 10 cm. ¿Qué tipo de triángulo es y cuáles son sus vértices si se nombra PQR?",
+            visual: `
+              <div class="tarjeta-figura-css">
+                <div class="etiquetas-medidas">
+                  <span class="chip-dato">Triángulo PQR</span>
+                  <span class="chip-dato">Lados: 6 cm, 8 cm y 10 cm</span>
+                </div>
+              </div>
+            `,
+            opciones: [
+              "Triángulo equilátero; vértices P y Q",
+              "Triángulo isósceles; vértices 6, 8 y 10",
+              "Triángulo escaleno; vértices P, Q y R",
+              "Cuadrilátero; vértices P, Q, R y S"
+            ],
+            correcta: 2,
+            pista: "Sus tres lados tienen medidas distintas (escaleno) y sus tres esquinas son los vértices P, Q y R."
+          },
+          {
+            tipo: "numero",
+            pregunta: "Un triángulo isósceles tiene una base de 5 cm y dos lados iguales de 7 cm. ¿Cuántos centímetros suman únicamente sus dos lados iguales?",
+            visual: `
+              <div class="tarjeta-figura-css">
+                <div class="etiquetas-medidas">
+                  <span class="chip-dato">Lados iguales: 7 cm y 7 cm</span>
+                  <span class="chip-dato">Base: 5 cm</span>
+                </div>
+              </div>
+            `,
+            etiqueta: "Suma de los dos lados iguales (cm):",
+            respuestaCorrecta: 14,
+            pista: "Suma los dos lados iguales: 7 cm + 7 cm = 14 cm."
+          },
+          {
+            tipo: "opcion",
+            pregunta: 'En el triángulo <strong>ABC</strong>, ¿qué pareja muestra correctamente un lado y un ángulo de la figura?',
+            visual: `
+              <div class="tarjeta-figura-css">
+                <div class="etiquetas-medidas">
+                  <span class="chip-dato">Triángulo ABC</span>
+                  <span class="chip-dato">Notación simbólica de lados y ángulos</span>
+                </div>
+              </div>
+            `,
+            opciones: [
+              'Lado ∠BC y ángulo <span class="seg">BCA</span>',
+              'Lado <span class="seg">BC</span> y ángulo ∠BCA',
+              'Lado <span class="seg">BCA</span> y ángulo <span class="seg">BC</span>',
+              'Lado ∠A y ángulo ∠B'
+            ],
+            correcta: 1,
+            pista: 'El lado lleva la barra superior (<span class="seg">BC</span>) y el ángulo lleva el símbolo ∠ con el vértice C en medio (∠BCA).'
+          }
+        ]
+      },
+      {
+        id: 2,
+        nombre: "Isla 3: Razonamiento Abstracto (Secuencias)",
+        desafios: [
+          {
+            tipo: "opcion",
+            pregunta: "Observa la secuencia de figuras geométricas en el templo. ¿Qué figura falta en el espacio vacío?",
+            visual: `
+              <div class="secuencia-fila">
+                <div class="paso-secuencia">🔺</div>
+                <span>➔</span>
+                <div class="paso-secuencia">🟡</div>
+                <span>➔</span>
+                <div class="paso-secuencia">🟩</div>
+                <span>➔</span>
+                <div class="paso-secuencia">🔺</div>
+                <span>➔</span>
+                <div class="paso-secuencia">🟡</div>
+                <span>➔</span>
+                <div class="paso-incognita">?</div>
+              </div>
+            `,
+            opciones: [
+              "🔺 Triángulo rojo",
+              "🟡 Círculo amarillo",
+              "🟩 Cuadrado verde",
+              "🔷 Rombo azul"
+            ],
+            correcta: 2,
+            pista: "El patrón se repite cada 3 figuras: 🔺, 🟡, 🟩. Después de 🟡 sigue 🟩."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Analiza esta secuencia creciente de figuras geométricas. ¿Cuántas figuras van en la cuarta posición?",
+            visual: `
+              <div class="secuencia-fila">
+                <div class="paso-secuencia">🔷</div>
+                <span>➔</span>
+                <div class="paso-secuencia">🔷🔷🔷</div>
+                <span>➔</span>
+                <div class="paso-secuencia">🔷🔷🔷🔷🔷</div>
+                <span>➔</span>
+                <div class="paso-incognita">?</div>
+              </div>
+            `,
+            opciones: [
+              "6 rombos (🔷×6)",
+              "7 rombos (🔷×7)",
+              "8 rombos (🔷×8)",
+              "9 rombos (🔷×9)"
+            ],
+            correcta: 1,
+            pista: "Aumenta de 2 en 2: 1, 3, 5... en el cuarto paso corresponden 7 rombos."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Observa la rotación de la flecha en sentido horario (90° en cada paso). ¿Qué dirección falta?",
+            visual: `
+              <div class="secuencia-fila">
+                <div class="paso-secuencia">⬆️</div>
+                <span>➔</span>
+                <div class="paso-secuencia">➡️</div>
+                <span>➔</span>
+                <div class="paso-secuencia">⬇️</div>
+                <span>➔</span>
+                <div class="paso-incognita">?</div>
+              </div>
+            `,
+            opciones: [
+              "⬆️ Arriba",
+              "➡️ Derecha",
+              "⬇️ Abajo",
+              "⬅️ Izquierda"
+            ],
+            correcta: 3,
+            pista: "Gira como las manecillas del reloj: arriba (12), derecha (3), abajo (6) y luego izquierda (9)."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Observa el orden de los polígonos según su número de lados: Triángulo (3) ➔ Cuadrado (4) ➔ Pentágono (5) ➔ ¿Qué polígono sigue?",
+            visual: `
+              <div class="secuencia-fila">
+                <div class="paso-secuencia">3 lados</div>
+                <span>➔</span>
+                <div class="paso-secuencia">4 lados</div>
+                <span>➔</span>
+                <div class="paso-secuencia">5 lados</div>
+                <span>➔</span>
+                <div class="paso-incognita">?</div>
+              </div>
+            `,
+            opciones: [
+              "Hexágono regular (6 lados)",
+              "Triángulo isósceles (3 lados)",
+              "Círculo (0 lados)",
+              "Octágono regular (8 lados)"
+            ],
+            correcta: 0,
+            pista: "Cada figura suma 1 lado más: 3, 4, 5 y sigue el polígono de 6 lados (hexágono)."
+          },
+          {
+            tipo: "numero",
+            pregunta: "En una serie de cuadriláteros dibujados por Arquímedes: el 1.º tiene 2 cuadros, el 2.º tiene 4 cuadros, el 3.º tiene 8 cuadros. ¿Cuántos cuadros tendrá el 4.º si se duplica en cada paso?",
+            visual: `
+              <div class="secuencia-fila">
+                <div class="paso-secuencia">2</div>
+                <span>➔</span>
+                <div class="paso-secuencia">4</div>
+                <span>➔</span>
+                <div class="paso-secuencia">8</div>
+                <span>➔</span>
+                <div class="paso-incognita">?</div>
+              </div>
+            `,
+            etiqueta: "Cantidad en el 4.º paso:",
+            respuestaCorrecta: 16,
+            pista: "Multiplica por 2 en cada paso: 2 × 2 = 4, 4 × 2 = 8, 8 × 2 = 16."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Descubre la figura que falta en el centro de esta secuencia simétrica:",
+            visual: `
+              <div class="secuencia-fila">
+                <div class="paso-secuencia">🔶</div>
+                <span>➔</span>
+                <div class="paso-secuencia">🟦</div>
+                <span>➔</span>
+                <div class="paso-incognita">?</div>
+                <span>➔</span>
+                <div class="paso-secuencia">🟦</div>
+                <span>➔</span>
+                <div class="paso-secuencia">🔶</div>
+              </div>
+            `,
+            opciones: [
+              "🔶 Rombo naranja",
+              "🟦 Cuadrado azul",
+              "⭐ Estrella dorada",
+              "🔺 Triángulo rojo"
+            ],
+            correcta: 2,
+            pista: "Los extremos son iguales (🔶 y 🟦) y en el eje central se ubica una figura distinta (⭐)."
+          }
+        ]
+      },
+      {
+        id: 3,
+        nombre: "Isla 4: Amplificación y Simplificación",
+        desafios: [
+          {
+            tipo: "fraccion",
+            pregunta: "Amplifica paso a paso la fracción 2/3: primero multiplica numerador y denominador por 4 (obtienes 8/12) y luego multiplica ese resultado por 5. Escribe la fracción final:",
+            visual: `
+              <div style="font-size:1.15rem; font-weight:800; color:#0369a1;">
+                2 / 3 &nbsp;──(× 4)──▶&nbsp; 8 / 12 &nbsp;──(× 5)──▶&nbsp; [ ? / ? ]
+              </div>
+            `,
+            num: 40,
+            den: 60,
+            pista: "Multiplica 8 × 5 = 40 en el numerador y 12 × 5 = 60 en el denominador."
+          },
+          {
+            tipo: "fraccion",
+            pregunta: "Amplifica la fracción 3/5 multiplicando numerador y denominador por 6. Escribe la fracción equivalente:",
+            visual: `
+              <div style="font-size:1.2rem; font-weight:800; color:#1d4ed8;">
+                3 / 5 &nbsp;──(× 6)──▶&nbsp; [ ? / ? ]
+              </div>
+            `,
+            num: 18,
+            den: 30,
+            pista: "3 × 6 = 18 arriba y 5 × 6 = 30 abajo."
+          },
+          {
+            tipo: "fraccion",
+            pregunta: "Amplifica 4/7 multiplicando ambos términos por 3. Escribe la fracción resultante:",
+            visual: `
+              <div style="font-size:1.2rem; font-weight:800; color:#0f766e;">
+                4 / 7 &nbsp;──(× 3)──▶&nbsp; [ ? / ? ]
+              </div>
+            `,
+            num: 12,
+            den: 21,
+            pista: "4 × 3 = 12 en el numerador y 7 × 3 = 21 en el denominador."
+          },
+          {
+            tipo: "fraccion",
+            pregunta: "Simplifica paso a paso la fracción 60/100: primero divide entre 5 (obtienes 12/20) y luego divide ese resultado entre 4. Escribe la fracción irreducible:",
+            visual: `
+              <div style="font-size:1.15rem; font-weight:800; color:#15803d;">
+                60 / 100 &nbsp;──(÷ 5)──▶&nbsp; 12 / 20 &nbsp;──(÷ 4)──▶&nbsp; [ ? / ? ]
+              </div>
+            `,
+            num: 3,
+            den: 5,
+            pista: "Divide 12 ÷ 4 = 3 en el numerador y 20 ÷ 4 = 5 en el denominador."
+          },
+          {
+            tipo: "fraccion",
+            pregunta: "Simplifica la fracción 36/48 dividiendo numerador y denominador entre 12 hasta obtener su fracción irreducible:",
+            visual: `
+              <div style="font-size:1.2rem; font-weight:800; color:#065f46;">
+                36 / 48 &nbsp;──(÷ 12)──▶&nbsp; [ ? / ? ]
+              </div>
+            `,
+            num: 3,
+            den: 4,
+            pista: "36 ÷ 12 = 3 arriba y 48 ÷ 12 = 4 abajo."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "¿Cuál es la fracción irreducible que resulta al simplificar 45/60 dividiendo numerador y denominador entre 15?",
+            visual: `
+              <div style="font-size:1.2rem; font-weight:800; color:var(--madera);">
+                45 / 60 &nbsp;──(÷ 15)──▶&nbsp; ?
+              </div>
+            `,
+            opciones: [
+              "9 / 12",
+              "3 / 4",
+              "4 / 3",
+              "15 / 20"
+            ],
+            correcta: 1,
+            pista: "45 ÷ 15 = 3 y 60 ÷ 15 = 4; la fracción irreducible es 3/4."
+          }
+        ]
+      },
+      {
+        id: 4,
+        nombre: "Isla 5: Representación Gráfica de Fracciones",
+        desafios: [
+          {
+            tipo: "opcion",
+            pregunta: "Observa las dos barras de fracciones dibujadas abajo: 2/4 y 6/8. Comparando las regiones coloreadas, ¿son fracciones equivalentes?",
+            visual: `
+              <div class="barra-fraccion-wrapper">
+                <div class="barra-fraccion-titulo">Barra A: 2/4</div>
+                <div class="barra-celdas">
+                  <div class="celda-fraccion llena-oro"></div>
+                  <div class="celda-fraccion llena-oro"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                </div>
+                <div class="barra-fraccion-titulo" style="margin-top:6px;">Barra B: 6/8</div>
+                <div class="barra-celdas">
+                  <div class="celda-fraccion llena-naranja"></div>
+                  <div class="celda-fraccion llena-naranja"></div>
+                  <div class="celda-fraccion llena-naranja"></div>
+                  <div class="celda-fraccion llena-naranja"></div>
+                  <div class="celda-fraccion llena-naranja"></div>
+                  <div class="celda-fraccion llena-naranja"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                </div>
+              </div>
+            `,
+            opciones: [
+              "No son equivalentes: 6/8 cubre mayor parte del entero que 2/4",
+              "Sí son equivalentes: ambas cubren exactamente la mitad",
+              "2/4 es mayor que 6/8",
+              "Ambas cubren el entero completo"
+            ],
+            correcta: 0,
+            pista: "2/4 ocupa la mitad (4/8), mientras que 6/8 ocupa tres cuartas partes del rectángulo."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Observa las barras de 5/6 y 10/12. Ambas cubren exactamente la misma longitud. ¿Por qué número se amplificó 5/6 para obtener 10/12?",
+            visual: `
+              <div class="barra-fraccion-wrapper">
+                <div class="barra-fraccion-titulo">Barra A: 5/6</div>
+                <div class="barra-celdas">
+                  <div class="celda-fraccion llena-verde"></div>
+                  <div class="celda-fraccion llena-verde"></div>
+                  <div class="celda-fraccion llena-verde"></div>
+                  <div class="celda-fraccion llena-verde"></div>
+                  <div class="celda-fraccion llena-verde"></div>
+                  <div class="celda-fraccion"></div>
+                </div>
+                <div class="barra-fraccion-titulo" style="margin-top:6px;">Barra B: 10/12</div>
+                <div class="barra-celdas">
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                </div>
+              </div>
+            `,
+            opciones: [
+              "Se multiplicó numerador y denominador por 2",
+              "Se sumó 5 arriba y 6 abajo",
+              "Se multiplicó por 3",
+              "Se dividió entre 2"
+            ],
+            correcta: 0,
+            pista: "5 × 2 = 10 y 6 × 2 = 12, por lo tanto 5/6 = 10/12."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Mira la barra dividida en 12 partes iguales con 9 partes coloreadas (9/12). ¿A qué fracción simplificada equivale?",
+            visual: `
+              <div class="barra-fraccion-wrapper">
+                <div class="barra-fraccion-titulo">Fracción representada: 9/12</div>
+                <div class="barra-celdas">
+                  <div class="celda-fraccion llena-oro"></div>
+                  <div class="celda-fraccion llena-oro"></div>
+                  <div class="celda-fraccion llena-oro"></div>
+                  <div class="celda-fraccion llena-oro"></div>
+                  <div class="celda-fraccion llena-oro"></div>
+                  <div class="celda-fraccion llena-oro"></div>
+                  <div class="celda-fraccion llena-oro"></div>
+                  <div class="celda-fraccion llena-oro"></div>
+                  <div class="celda-fraccion llena-oro"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                </div>
+              </div>
+            `,
+            opciones: [
+              "1 / 2",
+              "2 / 3",
+              "3 / 4",
+              "4 / 5"
+            ],
+            correcta: 2,
+            pista: "Divide 9 ÷ 3 = 3 y 12 ÷ 3 = 4: la fracción equivalente es 3/4."
+          },
+          {
+            tipo: "fraccion",
+            pregunta: "La primera barra muestra 1/3. Si dividimos cada tercio en 3 partes iguales (amplificando por 3), ¿qué fracción muestra la segunda barra?",
+            visual: `
+              <div class="barra-fraccion-wrapper">
+                <div class="barra-fraccion-titulo">Barra 1: 1/3</div>
+                <div class="barra-celdas">
+                  <div class="celda-fraccion llena-verde"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                </div>
+                <div class="barra-fraccion-titulo" style="margin-top:6px;">Barra 2 (amplificada × 3): ? / ?</div>
+                <div class="barra-celdas">
+                  <div class="celda-fraccion llena-verde"></div>
+                  <div class="celda-fraccion llena-verde"></div>
+                  <div class="celda-fraccion llena-verde"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                </div>
+              </div>
+            `,
+            num: 3,
+            den: 9,
+            pista: "Hay 3 cuadritos verdes de un total de 9 cuadritos: 3/9."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Observa las barras de 1/2 y 4/8. ¿Qué puedes concluir sobre ambas representaciones?",
+            visual: `
+              <div class="barra-fraccion-wrapper">
+                <div class="barra-fraccion-titulo">1/2</div>
+                <div class="barra-celdas">
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion"></div>
+                </div>
+                <div class="barra-fraccion-titulo" style="margin-top:6px;">4/8</div>
+                <div class="barra-celdas">
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion llena-azul"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                </div>
+              </div>
+            `,
+            opciones: [
+              "Son fracciones equivalentes porque cubren exactamente la misma mitad",
+              "4/8 es mayor que 1/2",
+              "1/2 es mayor que 4/8",
+              "No se pueden comparar"
+            ],
+            correcta: 0,
+            pista: "1 × 4 = 4 y 2 × 4 = 8; ambas cubren exactamente la mitad del entero."
+          },
+          {
+            tipo: "numero",
+            pregunta: "Si tienes una barra de 2/5 y quieres obtener una fracción equivalente con denominador 15, ¿qué numerador debes colorear?",
+            visual: `
+              <div class="barra-fraccion-wrapper">
+                <div class="barra-fraccion-titulo">2/5 = ? / 15</div>
+                <div class="barra-celdas">
+                  <div class="celda-fraccion llena-naranja"></div>
+                  <div class="celda-fraccion llena-naranja"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                  <div class="celda-fraccion"></div>
+                </div>
+              </div>
+            `,
+            etiqueta: "Numerador equivalente:",
+            respuestaCorrecta: 6,
+            pista: "Para pasar de 5 a 15 se multiplica por 3; entonces 2 × 3 = 6."
+          }
+        ]
+      },
+      {
+        id: 5,
+        nombre: "Isla 6: Resolución de Problemas",
+        desafios: [
+          {
+            tipo: "fraccion",
+            pregunta: "Agua dulce en la bodega: De un barril de 48 litros se han utilizado 36/48 del agua. Simplifica 36/48 dividiendo entre 12 para conocer la fracción más simple usada:",
+            visual: `
+              <div style="font-size:1.15rem; font-weight:800; color:#0369a1;">
+                💧 Barril: 36 / 48 &nbsp;──(÷ 12)──▶&nbsp; [ ? / ? ]
+              </div>
+            `,
+            num: 3,
+            den: 4,
+            pista: "36 ÷ 12 = 3 y 48 ÷ 12 = 4; se usaron 3/4 del barril."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Carta náutica: Camila amplió la escala de un mapa que marcaba 3/8 del recorrido multiplicando numerador y denominador por 4. ¿Qué fracción equivalente obtuvo?",
+            visual: `
+              <div style="font-size:1.15rem; font-weight:800; color:var(--madera);">
+                🗺️ Escala del mapa: 3 / 8 &nbsp;──(× 4)──▶&nbsp; ?
+              </div>
+            `,
+            opciones: [
+              "7 / 12",
+              "12 / 8",
+              "12 / 32",
+              "6 / 16"
+            ],
+            correcta: 2,
+            pista: "Multiplica 3 × 4 = 12 en el numerador y 8 × 4 = 32 en el denominador: 12/32."
+          },
+          {
+            tipo: "fraccion",
+            pregunta: "Reparto del cofre: De 60 monedas de oro encontradas en la cueva, 40/60 se guardaron para la tripulación. Simplifica 40/60 dividiendo ambos términos entre 20:",
+            visual: `
+              <div style="font-size:1.15rem; font-weight:800; color:#92400e;">
+                🪙 Monedas: 40 / 60 &nbsp;──(÷ 20)──▶&nbsp; [ ? / ? ]
+              </div>
+            `,
+            num: 2,
+            den: 3,
+            pista: "40 ÷ 20 = 2 arriba y 60 ÷ 20 = 3 abajo: 2/3."
+          },
+          {
+            tipo: "opcion",
+            pregunta: "Análisis de error en el cuaderno de bitácora: Mateo quiso amplificar 5/9 por 3 y escribió 15/9. ¿Cuál fue su error?",
+            visual: `
+              <div style="font-size:1.1rem; font-weight:800; color:#b91c1c;">
+                5 / 9 &nbsp;➔&nbsp; 15 / 9 ❌
+              </div>
+            `,
+            opciones: [
+              "Multiplicó solo el numerador por 3 y olvidó multiplicar el denominador (debió ser 15/27)",
+              "Debió sumar 3 al numerador y al denominador",
+              "5 × 3 no es igual a 15",
+              "No cometió ningún error; 5/9 y 15/9 son iguales"
+            ],
+            correcta: 0,
+            pista: "Para amplificar una fracción se multiplica tanto el numerador como el denominador por el mismo número: 5×3=15 y 9×3=27."
+          },
+          {
+            tipo: "fraccion",
+            pregunta: "Provisiones del barco: En la despensa hay 24 frutas y se repartieron 18/24 durante la travesía. Simplifica 18/24 dividiendo entre 6:",
+            visual: `
+              <div style="font-size:1.15rem; font-weight:800; color:#15803d;">
+                🍎 Provisiones: 18 / 24 &nbsp;──(÷ 6)──▶&nbsp; [ ? / ? ]
+              </div>
+            `,
+            num: 3,
+            den: 4,
+            pista: "18 ÷ 6 = 3 en el numerador y 24 ÷ 6 = 4 en el denominador: 3/4."
+          },
+          {
+            tipo: "numero",
+            pregunta: "Mapa final: Dos exploradores recorren la misma distancia. Uno avanzó 2/3 del camino y el otro avanzó ?/12. ¿Qué numerador completa la fracción equivalente?",
+            visual: `
+              <div style="font-size:1.15rem; font-weight:800; color:#1e3a8a;">
+                🧭 2 / 3 &nbsp;=&nbsp; ? / 12
+              </div>
+            `,
+            etiqueta: "Numerador equivalente:",
+            respuestaCorrecta: 8,
+            pista: "3 × 4 = 12, entonces 2 × 4 = 8."
+          }
+        ]
+      }
+    ];
+
+    const TOTAL_EJERCICIOS = ISLAS.reduce((acc, isla) => acc + isla.desafios.length, 0);
+    const PUNTAJE_MAXIMO = TOTAL_EJERCICIOS * PUNTOS_POR_EJERCICIO;
+
+    /* =====================================================================
+       ESTADO PERSISTENTE EN LOCALSTORAGE
+       ===================================================================== */
+    const CLAVE_STORAGE_ESTADO = "tesoro_mate_sin_svg_estado_v1";
+    const CLAVE_STORAGE_HISTORIAL = "tesoro_mate_sin_svg_historial_v1";
+
+    function crearEstadoInicial(nombre = "") {
+      return {
+        nombre,
+        puntos: 0,
+        vidas: 5,
+        islaDesbloqueada: 0,
+        islasCompletadas: [false, false, false, false, false, false],
+        pasoIsla: [0, 0, 0, 0, 0, 0],
+        anotacionesBitacora: ["", "", "", "", "", ""],
+        segundos: 0,
+        terminado: false,
+        guardadoEnHistorial: false
+      };
+    }
+
+    let estado = crearEstadoInicial("");
+    let islaActual = 0;
+    let opcionSeleccionada = null;
+    let relojInterval = null;
+
+    function cargarEstado() {
+      try {
+        const raw = localStorage.getItem(CLAVE_STORAGE_ESTADO);
+        if (raw) {
+          estado = { ...crearEstadoInicial(""), ...JSON.parse(raw) };
+        }
+      } catch (e) {
+        estado = crearEstadoInicial("");
+      }
+    }
+
+    function guardarEstado() {
+      try {
+        localStorage.setItem(CLAVE_STORAGE_ESTADO, JSON.stringify(estado));
+      } catch (e) {
+        // Ignorar si almacenamiento local está bloqueado
+      }
+    }
+
+    /* =====================================================================
+       NAVEGACIÓN SPA ENTRE VISTAS
+       ===================================================================== */
+    function irAVista(idVista) {
+      document.querySelectorAll(".vista").forEach((v) => v.classList.remove("activa"));
+      const vista = document.getElementById(`vista-${idVista}`);
+      if (vista) vista.classList.add("activa");
+
+      if (idVista === "inicio") {
+        const input = document.getElementById("input-nombre-estudiante");
+        if (estado.nombre && !input.value) input.value = estado.nombre;
+      } else if (idVista === "juego") {
+        actualizarHUD();
+        actualizarTarjetasIslas();
+        iniciarCronometro();
+      }
+    }
+
+    /* =====================================================================
+       HUD, CRONÓMETRO Y TABLERO DE ISLAS
+       ===================================================================== */
+    function iniciarCronometro() {
+      if (relojInterval) clearInterval(relojInterval);
+      relojInterval = setInterval(() => {
+        const enJuego = document.getElementById("vista-juego").classList.contains("activa");
+        if (enJuego && !estado.terminado && estado.vidas > 0) {
+          estado.segundos += 1;
+          guardarEstado();
+          document.getElementById("hud-tiempo").textContent = formatearTiempo(estado.segundos);
+        }
+      }, 1000);
+    }
+
+    function formatearTiempo(seg) {
+      const m = String(Math.floor(seg / 60)).padStart(2, "0");
+      const s = String(seg % 60).padStart(2, "0");
+      return `${m}:${s}`;
+    }
+
+    function mostrarNotificacion(texto) {
+      const banner = document.getElementById("banner-notificacion");
+      banner.textContent = texto;
+      banner.classList.add("visible");
+      clearTimeout(mostrarNotificacion._timer);
+      mostrarNotificacion._timer = setTimeout(() => banner.classList.remove("visible"), 3600);
+    }
+
+    function actualizarHUD() {
+      document.getElementById("hud-nombre").textContent = estado.nombre || "Explorador";
+      document.getElementById("hud-puntos").textContent = estado.puntos;
+      document.getElementById("hud-tiempo").textContent = formatearTiempo(estado.segundos);
+      MusicaExpedicion.actualizarBoton();
+
+      let corazones = "";
+      for (let i = 0; i < 5; i++) {
+        corazones += i < estado.vidas ? "❤️" : "🖤";
+      }
+      document.getElementById("hud-vidas").textContent = corazones;
+
+      const llaves = estado.islasCompletadas.filter(Boolean).length;
+      document.getElementById("hud-llaves").textContent = llaves;
+
+      const pct = Math.round((llaves / 6) * 100);
+      document.getElementById("hud-porcentaje").textContent = `${pct}%`;
+      document.getElementById("hud-barra").style.width = `${pct}%`;
+    }
+
+    function actualizarTarjetasIslas() {
+      for (let i = 0; i < 6; i++) {
+        const card = document.getElementById(`isla-btn-${i}`);
+        const lbl = document.getElementById(`isla-estado-${i}`);
+        card.classList.remove("activa", "bloqueada", "completada");
+
+        if (estado.islasCompletadas[i]) {
+          card.classList.add("completada");
+          lbl.textContent = `✅ Llave ${i + 1} obtenida (Código: ${CODIGOS_LLAVES[i]})`;
+        } else if (i <= estado.islaDesbloqueada) {
+          card.classList.add("activa");
+          lbl.textContent = `⚔️ ¡Explorar ahora! (${estado.pasoIsla[i] + 1}/6)`;
+        } else {
+          card.classList.add("bloqueada");
+          lbl.textContent = "🔒 Bloqueada";
+        }
+      }
+
+      const llaves = estado.islasCompletadas.filter(Boolean).length;
+      const btnCofre = document.getElementById("btn-cofre-tesoro");
+      const estadoCofre = document.getElementById("estado-cofre-txt");
+
+      if (llaves === 6) {
+        btnCofre.classList.remove("bloqueado");
+        btnCofre.classList.add("desbloqueado");
+        estadoCofre.textContent = "🔓 ¡Listo! Haz clic para ingresar tus 6 códigos";
+      } else {
+        btnCofre.classList.add("bloqueado");
+        btnCofre.classList.remove("desbloqueado");
+        estadoCofre.textContent = `Faltan ${6 - llaves} llave(s) por conquistar`;
+      }
+    }
+
+    /* =====================================================================
+       DESAFÍOS DE CADA ISLA
+       ===================================================================== */
+    function abrirIsla(idx) {
+      if (idx > estado.islaDesbloqueada) {
+        mostrarNotificacion("🔒 Completa primero la isla desbloqueada anterior para avanzar.");
+        return;
+      }
+      if (estado.islasCompletadas[idx]) {
+        mostrarNotificacion(`🗝️ Ya conquistaste esta isla. Tu código de Llave ${idx + 1} es: ${CODIGOS_LLAVES[idx]}.`);
+        return;
+      }
+      islaActual = idx;
+      renderizarDesafio();
+      document.getElementById("modal-desafio").classList.add("activo");
+    }
+
+    function cerrarModalDesafio() {
+      document.getElementById("modal-desafio").classList.remove("activo");
+    }
+
+    function renderizarDesafio() {
+      const isla = ISLAS[islaActual];
+      const total = isla.desafios.length;
+      const paso = estado.pasoIsla[islaActual];
+      const d = isla.desafios[paso];
+      opcionSeleccionada = null;
+
+      document.getElementById("modal-badge").textContent = `ISLA ${islaActual + 1} DE 6`;
+      document.getElementById("modal-titulo").textContent = isla.nombre;
+      document.getElementById("modal-paso").textContent = `Desafío ${paso + 1} de ${total} • Recompensa: +${PUNTOS_POR_EJERCICIO} puntos`;
+      document.getElementById("modal-pregunta").innerHTML = d.pregunta;
+      document.getElementById("modal-visual").innerHTML = d.visual;
+
+      const fb = document.getElementById("modal-feedback");
+      fb.className = "caja-feedback";
+      fb.innerHTML = "";
+
+      document.getElementById("panel-llave-conquistada").classList.add("oculto");
+      document.getElementById("btn-verificar").classList.remove("oculto");
+      document.getElementById("btn-siguiente").classList.add("oculto");
+      document.getElementById("btn-reclamar-llave").classList.add("oculto");
+
+      const contResp = document.getElementById("modal-respuesta");
+      contResp.innerHTML = "";
+
+      if (d.tipo === "opcion") {
+        const grid = document.createElement("div");
+        grid.className = "grid-opciones";
+        const letras = ["A", "B", "C", "D"];
+
+        d.opciones.forEach((texto, i) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "opcion-item";
+          btn.innerHTML = `${letras[i]}. ${texto}`;
+          btn.addEventListener("click", () => {
+            grid.querySelectorAll(".opcion-item").forEach((el) => el.classList.remove("seleccionada"));
+            btn.classList.add("seleccionada");
+            opcionSeleccionada = i;
+          });
+          grid.appendChild(btn);
+        });
+        contResp.appendChild(grid);
+      } else if (d.tipo === "numero") {
+        contResp.innerHTML = `
+          <div class="inputs-numericos-row">
+            <label for="input-resp-numero">${d.etiqueta}</label>
+            <input type="number" id="input-resp-numero" class="campo-numero" placeholder="?" />
+          </div>
+        `;
+      } else if (d.tipo === "fraccion") {
+        contResp.innerHTML = `
+          <div class="inputs-numericos-row">
+            <span>Fracción equivalente =</span>
+            <div class="fraccion-caja">
+              <input type="number" id="input-resp-num" class="campo-numero" placeholder="Num" />
+              <div class="linea-divisoria"></div>
+              <input type="number" id="input-resp-den" class="campo-numero" placeholder="Den" />
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function verificarRespuesta() {
+      const isla = ISLAS[islaActual];
+      const total = isla.desafios.length;
+      const paso = estado.pasoIsla[islaActual];
+      const d = isla.desafios[paso];
+      const fb = document.getElementById("modal-feedback");
+
+      let respondido = false;
+      let esCorrecto = false;
+
+      if (d.tipo === "opcion") {
+        if (opcionSeleccionada !== null) {
+          respondido = true;
+          esCorrecto = opcionSeleccionada === d.correcta;
+        }
+      } else if (d.tipo === "numero") {
+        const val = parseInt(document.getElementById("input-resp-numero").value, 10);
+        if (!Number.isNaN(val)) {
+          respondido = true;
+          esCorrecto = val === d.respuestaCorrecta;
+        }
+      } else if (d.tipo === "fraccion") {
+        const n = parseInt(document.getElementById("input-resp-num").value, 10);
+        const den = parseInt(document.getElementById("input-resp-den").value, 10);
+        if (!Number.isNaN(n) && !Number.isNaN(den)) {
+          respondido = true;
+          esCorrecto = n === d.num && den === d.den;
+        }
+      }
+
+      if (!respondido) {
+        fb.className = "caja-feedback incorrecto";
+        fb.textContent = "⚠️ Selecciona o escribe tu respuesta antes de verificar.";
+        return;
+      }
+
+      if (esCorrecto) {
+        estado.puntos += PUNTOS_POR_EJERCICIO;
+        guardarEstado();
+        actualizarHUD();
+
+        fb.className = "caja-feedback correcto";
+        fb.textContent = `🎉 ¡Excelente! Respuesta correcta (+${PUNTOS_POR_EJERCICIO} puntos).`;
+        document.getElementById("btn-verificar").classList.add("oculto");
+
+        if (paso < total - 1) {
+          document.getElementById("btn-siguiente").classList.remove("oculto");
+        } else {
+          // Último desafío de la isla: mostrar llave dorada y código secreto
+          const codigo = CODIGOS_LLAVES[islaActual];
+          document.getElementById("texto-codigo-llave").textContent = `🗝️ Llave ${islaActual + 1} — Código Secreto: ${codigo}`;
+          document.getElementById("panel-llave-conquistada").classList.remove("oculto");
+          document.getElementById("btn-reclamar-llave").classList.remove("oculto");
+        }
+      } else {
+        estado.vidas = Math.max(0, estado.vidas - 1);
+        guardarEstado();
+        actualizarHUD();
+
+        if (estado.vidas <= 0) {
+          cerrarModalDesafio();
+          registrarEnHistorial("Sin vidas");
+          document.getElementById("derrota-puntos").textContent = estado.puntos;
+          document.getElementById("modal-derrota").classList.add("activo");
+        } else {
+          fb.className = "caja-feedback incorrecto";
+          fb.innerHTML = `❌ Respuesta incorrecta (-1 ❤️). Pista: ${d.pista}`;
+        }
+      }
+    }
+
+    function siguienteDesafio() {
+      const total = ISLAS[islaActual].desafios.length;
+      if (estado.pasoIsla[islaActual] < total - 1) {
+        estado.pasoIsla[islaActual] += 1;
+        guardarEstado();
+        renderizarDesafio();
+      }
+    }
+
+    function reclamarLlaveYGuardar() {
+      const codigo = CODIGOS_LLAVES[islaActual];
+      estado.islasCompletadas[islaActual] = true;
+      estado.anotacionesBitacora[islaActual] = String(codigo);
+      if (islaActual + 1 < 6) {
+        estado.islaDesbloqueada = islaActual + 1;
+      }
+      guardarEstado();
+      actualizarHUD();
+      actualizarTarjetasIslas();
+      cerrarModalDesafio();
+      mostrarNotificacion(`🗝️ ¡Llave ${islaActual + 1} (Código: ${codigo}) guardada en tu Bitácora!`);
+    }
+
+    /* =====================================================================
+       BITÁCORA DE LLAVES (ANOTAR Y CONSULTAR)
+       ===================================================================== */
+    function abrirBitacora() {
+      const fb = document.getElementById("feedback-bitacora");
+      fb.className = "caja-feedback";
+      fb.textContent = "";
+
+      for (let i = 0; i < 6; i++) {
+        const input = document.getElementById(`bit-input-${i}`);
+        const card = document.getElementById(`bit-card-${i}`);
+        const status = document.getElementById(`bit-status-${i}`);
+        input.value = estado.anotacionesBitacora[i] || "";
+
+        if (estado.islasCompletadas[i]) {
+          card.classList.add("desbloqueado");
+          status.textContent = "✅ Isla conquistada";
+          status.style.color = "var(--verde)";
+        } else {
+          card.classList.remove("desbloqueado");
+          status.textContent = "🔒 Pendiente";
+          status.style.color = "#57534e";
+        }
+      }
+
+      document.getElementById("modal-bitacora").classList.add("activo");
+    }
+
+    function cerrarBitacora() {
+      document.getElementById("modal-bitacora").classList.remove("activo");
+    }
+
+    function guardarAnotacionesBitacora() {
+      for (let i = 0; i < 6; i++) {
+        estado.anotacionesBitacora[i] = document.getElementById(`bit-input-${i}`).value.trim();
+      }
+      guardarEstado();
+      const fb = document.getElementById("feedback-bitacora");
+      fb.className = "caja-feedback correcto";
+      fb.textContent = "💾 Tus anotaciones en la Bitácora han sido guardadas.";
+    }
+
+    function consultarLlavesDesbloqueadasEnBitacora() {
+      let ganadas = 0;
+      for (let i = 0; i < 6; i++) {
+        if (estado.islasCompletadas[i]) {
+          const cod = String(CODIGOS_LLAVES[i]);
+          estado.anotacionesBitacora[i] = cod;
+          document.getElementById(`bit-input-${i}`).value = cod;
+          ganadas += 1;
+        }
+      }
+      guardarEstado();
+      const fb = document.getElementById("feedback-bitacora");
+      fb.className = ganadas > 0 ? "caja-feedback correcto" : "caja-feedback incorrecto";
+      fb.textContent =
+        ganadas > 0
+          ? `🔍 Se muestran tus ${ganadas} llave(s) conquistada(s) hasta ahora.`
+          : "ℹ️ Aún no has completado ninguna isla para obtener llaves.";
+    }
+
+    /* =====================================================================
+       CERRADURA DEL GRAN COFRE Y REGALO SORPRESA
+       ===================================================================== */
+    function abrirCerraduraCofre() {
+      const llaves = estado.islasCompletadas.filter(Boolean).length;
+      if (llaves < 6) {
+        mostrarNotificacion(`🔒 Necesitas las 6 llaves para abrir el Gran Cofre. Llevas ${llaves}/6.`);
+        return;
+      }
+
+      for (let i = 0; i < 6; i++) {
+        document.getElementById(`cofre-cod-${i}`).value = "";
+      }
+      const fb = document.getElementById("feedback-cerradura");
+      fb.className = "caja-feedback";
+      fb.textContent = "";
+      document.getElementById("modal-cerradura").classList.add("activo");
+      setTimeout(() => document.getElementById("cofre-cod-0").focus(), 60);
+    }
+
+    function cerrarCerradura() {
+      document.getElementById("modal-cerradura").classList.remove("activo");
+    }
+
+    function verificarCerraduraCofre() {
+      const fb = document.getElementById("feedback-cerradura");
+      const incorrectas = [];
+
+      for (let i = 0; i < 6; i++) {
+        const val = parseInt(document.getElementById(`cofre-cod-${i}`).value, 10);
+        if (Number.isNaN(val)) {
+          fb.className = "caja-feedback incorrecto";
+          fb.textContent = "⚠️ Completa las 6 casillas con los códigos numéricos de cada llave.";
+          return;
+        }
+        if (val !== CODIGOS_LLAVES[i]) {
+          incorrectas.push(`Llave ${i + 1}`);
+        }
+      }
+
+      if (incorrectas.length > 0) {
+        fb.className = "caja-feedback incorrecto";
+        fb.textContent = `❌ Código incorrecto en: ${incorrectas.join(", ")}. Revisa tu Bitácora de Llaves.`;
+        return;
+      }
+
+      cerrarCerradura();
+      estado.terminado = true;
+      guardarEstado();
+      registrarEnHistorial("Completado");
+
+      const nota100 = Math.round((estado.puntos / PUNTAJE_MAXIMO) * 100);
+      document.getElementById("victoria-nombre").textContent = estado.nombre || "Explorador";
+      document.getElementById("victoria-puntos").textContent = `${estado.puntos} / ${PUNTAJE_MAXIMO}`;
+      document.getElementById("victoria-nota").textContent = `${nota100} / 100`;
+      document.getElementById("victoria-tiempo").textContent = formatearTiempo(estado.segundos);
+      document.getElementById("modal-victoria").classList.add("activo");
+    }
+
+    function lanzarLluviaMonedas() {
+      const el = document.getElementById("lluvia-monedas-victoria");
+      const combinaciones = [
+        "🪙 💎 👑 ✨ 🏆 💎 🪙",
+        "🌟 🪙 🎖️ 🎁 👑 🌟 🪙",
+        "💎 🏆 🪙 👑 ✨ 🪙 💎"
+      ];
+      el.textContent = combinaciones[Math.floor(Math.random() * combinaciones.length)];
+    }
+
+    /* =====================================================================
+       PANEL PRIVADO DOCENTE Y EXPORTACIÓN EXCEL (.CSV CON BOM UTF-8)
+       ===================================================================== */
+    function obtenerHistorial() {
+      try {
+        return JSON.parse(localStorage.getItem(CLAVE_STORAGE_HISTORIAL) || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function registrarEnHistorial(estadoMision) {
+      if (estado.guardadoEnHistorial) return;
+
+      const historial = obtenerHistorial();
+      const ahora = new Date();
+      const fecha = ahora.toLocaleDateString("es-EC");
+      const hora = ahora.toLocaleTimeString("es-EC", { hour: "2-digit", minute: "2-digit" });
+      const aciertos = Math.round(estado.puntos / PUNTOS_POR_EJERCICIO);
+      const nota100 = Math.round((estado.puntos / PUNTAJE_MAXIMO) * 100);
+      const nota10 = ((estado.puntos / PUNTAJE_MAXIMO) * 10).toFixed(2);
+      const llaves = estado.islasCompletadas.filter(Boolean).length;
+
+      historial.push({
+        estudiante: estado.nombre || "Explorador",
+        fecha,
+        hora,
+        correctos: `${aciertos}/${TOTAL_EJERCICIOS}`,
+        puntaje: estado.puntos,
+        nota100,
+        nota10,
+        llaves: `${llaves}/6`,
+        tiempo: formatearTiempo(estado.segundos),
+        estado: estadoMision
+      });
+
+      localStorage.setItem(CLAVE_STORAGE_HISTORIAL, JSON.stringify(historial));
+      estado.guardadoEnHistorial = true;
+      guardarEstado();
+    }
+
+    function renderizarTablaDocente() {
+      const historial = obtenerHistorial();
+      document.getElementById("docente-contador").textContent = historial.length;
+      const tbody = document.getElementById("tbody-docente");
+      tbody.innerHTML = "";
+
+      if (historial.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="10" style="text-align:center; padding:18px; color:#57534e;">
+              Aún no hay calificaciones registradas en este dispositivo.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      historial.forEach((r) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${r.estudiante}</strong></td>
+          <td>${r.fecha}</td>
+          <td>${r.hora}</td>
+          <td>${r.correctos}</td>
+          <td>${r.puntaje}</td>
+          <td><strong>${r.nota100}</strong></td>
+          <td>${r.nota10}</td>
+          <td>${r.llaves}</td>
+          <td>${r.tiempo}</td>
+          <td>${r.estado}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function abrirModalDocente() {
+      document.getElementById("input-clave-docente").value = "";
+      document.getElementById("error-clave-docente").textContent = "";
+      document.getElementById("docente-mensaje-estado").textContent = "";
+      document.getElementById("confirmacion-borrar-box").classList.add("oculto");
+      document.getElementById("docente-login-vista").classList.remove("oculto");
+      document.getElementById("docente-panel-vista").classList.add("oculto");
+      document.getElementById("modal-docente").classList.add("activo");
+      setTimeout(() => document.getElementById("input-clave-docente").focus(), 60);
+    }
+
+    function cerrarModalDocente() {
+      document.getElementById("modal-docente").classList.remove("activo");
+    }
+
+    function validarClaveDocente() {
+      const clave = document.getElementById("input-clave-docente").value.trim().toUpperCase();
+      const err = document.getElementById("error-clave-docente");
+
+      if (clave !== CLAVE_DOCENTE) {
+        err.textContent = "❌ Contraseña incorrecta.";
+        return;
+      }
+
+      err.textContent = "";
+      document.getElementById("docente-login-vista").classList.add("oculto");
+      document.getElementById("docente-panel-vista").classList.remove("oculto");
+      renderizarTablaDocente();
+    }
+
+    function descargarExcelCSV() {
+      const historial = obtenerHistorial();
+      const msg = document.getElementById("docente-mensaje-estado");
+
+      if (historial.length === 0) {
+        msg.style.color = "var(--rojo)";
+        msg.textContent = "ℹ️ No hay registros disponibles para descargar.";
+        return;
+      }
+
+      const encabezados = [
+        "Estudiante",
+        "Fecha",
+        "Hora",
+        "Ejercicios Correctos",
+        "Puntaje Total (Max 3600)",
+        "Calificacion sobre 100",
+        "Calificacion sobre 10",
+        "Llaves Obtenidas",
+        "Tiempo Empleado",
+        "Estado"
+      ];
+
+      const filas = historial.map((r) =>
+        [
+          `"${String(r.estudiante).replace(/"/g, '""')}"`,
+          r.fecha,
+          r.hora,
+          r.correctos,
+          r.puntaje,
+          r.nota100,
+          r.nota10,
+          r.llaves,
+          r.tiempo,
+          `"${String(r.estado).replace(/"/g, '""')}"`
+        ].join(";")
+      );
+
+      const csv = "\uFEFF" + [encabezados.join(";"), ...filas].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      const enlace = document.createElement("a");
+      enlace.href = url;
+      enlace.download = `Calificaciones_Tesoro_Matematico_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(enlace);
+      enlace.click();
+      document.body.removeChild(enlace);
+      URL.revokeObjectURL(url);
+
+      msg.style.color = "var(--verde)";
+      msg.textContent = "✅ Archivo Excel (.csv) descargado correctamente.";
+    }
+
+    /* =====================================================================
+       INICIO Y REINICIO DE PARTIDA
+       ===================================================================== */
+    function comenzarNuevaAventura() {
+      const input = document.getElementById("input-nombre-estudiante");
+      const err = document.getElementById("error-nombre");
+      const nombre = (input.value || estado.nombre || "").trim();
+
+      if (nombre.length < 2) {
+        irAVista("inicio");
+        err.textContent = "⚠️ Por favor, escribe el nombre completo del estudiante para comenzar.";
+        input.focus();
+        return;
+      }
+
+      MusicaExpedicion.activar();
+      err.textContent = "";
+      estado = crearEstadoInicial(nombre);
+      guardarEstado();
+      irAVista("juego");
+    }
+
+    function reiniciarAventura() {
+      const nombre = estado.nombre || "Explorador";
+      document.getElementById("modal-victoria").classList.remove("activo");
+      document.getElementById("modal-derrota").classList.remove("activo");
+      estado = crearEstadoInicial(nombre);
+      guardarEstado();
+      irAVista("juego");
+    }
+
+    /* =====================================================================
+       EVENTOS AL CARGAR EL DOCUMENTO
+       ===================================================================== */
+    document.addEventListener("DOMContentLoaded", () => {
+      cargarEstado();
+      MusicaExpedicion.actualizarBoton();
+
+      if (estado.nombre) {
+        document.getElementById("input-nombre-estudiante").value = estado.nombre;
+      }
+
+      // Navegación principal
+      document.getElementById("btn-comenzar-aventura").addEventListener("click", comenzarNuevaAventura);
+      document.getElementById("btn-comenzar-mision").addEventListener("click", comenzarNuevaAventura);
+      document.getElementById("btn-ir-instrucciones").addEventListener("click", () => {
+        MusicaExpedicion.activar();
+        irAVista("instrucciones");
+      });
+      document.getElementById("btn-volver-inicio").addEventListener("click", () => irAVista("inicio"));
+
+      // Controles HUD
+      document.getElementById("btn-toggle-musica").addEventListener("click", () => MusicaExpedicion.alternar());
+      document.getElementById("btn-hud-instrucciones").addEventListener("click", () => irAVista("instrucciones"));
+      document.getElementById("btn-hud-inicio").addEventListener("click", () => irAVista("inicio"));
+      document.getElementById("btn-abrir-bitacora").addEventListener("click", abrirBitacora);
+
+      // Islas
+      for (let i = 0; i < 6; i++) {
+        document.getElementById(`isla-btn-${i}`).addEventListener("click", () => abrirIsla(i));
+      }
+
+      // Desafíos
+      document.getElementById("btn-cerrar-desafio").addEventListener("click", cerrarModalDesafio);
+      document.getElementById("btn-verificar").addEventListener("click", verificarRespuesta);
+      document.getElementById("btn-siguiente").addEventListener("click", siguienteDesafio);
+      document.getElementById("btn-reclamar-llave").addEventListener("click", reclamarLlaveYGuardar);
+
+      // Bitácora de Llaves
+      document.getElementById("btn-cerrar-bitacora").addEventListener("click", cerrarBitacora);
+      document.getElementById("btn-guardar-anotaciones").addEventListener("click", guardarAnotacionesBitacora);
+      document.getElementById("btn-autocompletar-desbloqueadas").addEventListener("click", consultarLlavesDesbloqueadasEnBitacora);
+
+      // Cerradura y Victoria / Derrota
+      document.getElementById("btn-cofre-tesoro").addEventListener("click", abrirCerraduraCofre);
+      document.getElementById("btn-cerrar-cerradura").addEventListener("click", cerrarCerradura);
+      document.getElementById("btn-ver-bitacora-desde-cofre").addEventListener("click", () => {
+        cerrarCerradura();
+        abrirBitacora();
+      });
+      document.getElementById("btn-desbloquear-cofre").addEventListener("click", verificarCerraduraCofre);
+      document.getElementById("btn-lanzar-monedas").addEventListener("click", lanzarLluviaMonedas);
+
+      document.getElementById("btn-jugar-de-nuevo").addEventListener("click", reiniciarAventura);
+      document.getElementById("btn-victoria-inicio").addEventListener("click", () => {
+        document.getElementById("modal-victoria").classList.remove("activo");
+        irAVista("inicio");
+      });
+      document.getElementById("btn-reintentar").addEventListener("click", reiniciarAventura);
+      document.getElementById("btn-derrota-inicio").addEventListener("click", () => {
+        document.getElementById("modal-derrota").classList.remove("activo");
+        irAVista("inicio");
+      });
+
+      // Acceso Docente
+      document.getElementById("btn-acceso-docente").addEventListener("click", abrirModalDocente);
+      document.getElementById("btn-cerrar-docente").addEventListener("click", cerrarModalDocente);
+      document.getElementById("btn-validar-docente").addEventListener("click", validarClaveDocente);
+      document.getElementById("input-clave-docente").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") validarClaveDocente();
+      });
+      document.getElementById("btn-descargar-excel").addEventListener("click", descargarExcelCSV);
+      document.getElementById("btn-pedir-borrar-historial").addEventListener("click", () => {
+        document.getElementById("confirmacion-borrar-box").classList.remove("oculto");
+      });
+      document.getElementById("btn-borrar-no").addEventListener("click", () => {
+        document.getElementById("confirmacion-borrar-box").classList.add("oculto");
+      });
+      document.getElementById("btn-borrar-si").addEventListener("click", () => {
+        localStorage.removeItem(CLAVE_STORAGE_HISTORIAL);
+        document.getElementById("confirmacion-borrar-box").classList.add("oculto");
+        renderizarTablaDocente();
+        const msg = document.getElementById("docente-mensaje-estado");
+        msg.style.color = "var(--verde)";
+        msg.textContent = "🗑️ Historial de calificaciones borrado.";
+      });
+    });
+  </script>
+</body>
+</html>
+```
